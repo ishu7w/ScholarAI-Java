@@ -1,20 +1,23 @@
 "use server";
 
 // ─────────────────────────────────────────────────────────────
-// Auth server actions. In demo mode (no Supabase env) every
-// action succeeds without persistence — preserving the original
-// "any credentials work" demo behavior.
+// Auth server actions. Demo mode is intentionally read-only for accounts:
+// never report that a user was created unless persistent auth and profile
+// storage are available.
 // ─────────────────────────────────────────────────────────────
 
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getSupabaseServer, getSupabaseAdmin } from "@/lib/supabase/server";
 import { isLiveMode, hasDatabase } from "@/lib/env";
 import { db, schema } from "@/lib/db/client";
 import { checkRateLimit, formatRetryAfter } from "@/lib/rate-limit";
 
-export type AuthResult = { ok: true } | { ok: false; error: string };
+export type AuthResult =
+  | { ok: true; redirectTo?: string; message?: string }
+  | { ok: false; error: string };
 
 // Per-email throttles on the credential endpoints. Keyed on the submitted
 // email so one account's lockout never affects another's — and deliberately
@@ -63,7 +66,18 @@ export async function signUpAction(input: unknown): Promise<AuthResult> {
   );
   if (!gate.allowed) return { ok: false, error: throttled(gate.retryAfterMs) };
 
-  if (!isLiveMode()) return { ok: true }; // demo mode: simulated success
+  if (!isLiveMode() || !hasDatabase()) {
+    if (!isLiveMode() && !hasDatabase()) {
+      // A registration attempt means the user intends a real account. Clear
+      // any sample session so it cannot look like account creation worked.
+      (await cookies()).delete(DEMO_ROLE_COOKIE);
+    }
+    return {
+      ok: false,
+      error:
+        "Account creation is unavailable in demo mode. Configure Supabase Auth and DATABASE_URL to create a persistent account.",
+    };
+  }
 
   const supabase = await getSupabaseServer();
   if (!supabase) return { ok: false, error: "Auth service unavailable" };
@@ -72,6 +86,7 @@ export async function signUpAction(input: unknown): Promise<AuthResult> {
   // straight into a session — no email round-trip for this product.
   const admin = getSupabaseAdmin();
   let userId: string;
+  let hasSession = false;
   if (admin) {
     const { data: created, error } = await admin.auth.admin.createUser({
       email: data.email,
@@ -91,6 +106,7 @@ export async function signUpAction(input: unknown): Promise<AuthResult> {
       password: data.password,
     });
     if (signInErr) return { ok: false, error: signInErr.message };
+    hasSession = true;
   } else {
     const { data: signUp, error } = await supabase.auth.signUp({
       email: data.email,
@@ -99,6 +115,7 @@ export async function signUpAction(input: unknown): Promise<AuthResult> {
     if (error) return { ok: false, error: error.message };
     if (!signUp.user) return { ok: false, error: "Sign-up did not return a user" };
     userId = signUp.user.id;
+    hasSession = Boolean(signUp.session);
   }
 
   // Profile rows are created with the service role: at this point the
@@ -138,7 +155,14 @@ export async function signUpAction(input: unknown): Promise<AuthResult> {
       return { ok: false, error: "Account created but profile setup failed — contact support" };
     }
   }
-  return { ok: true };
+  const redirectTo =
+    data.role === "institution" ? "/dashboard/institution" : "/dashboard/student";
+  return hasSession
+    ? { ok: true, redirectTo }
+    : {
+        ok: true,
+        message: "Account created. Check your email to confirm it, then sign in.",
+      };
 }
 
 const signInSchema = z.object({
@@ -149,6 +173,33 @@ const signInSchema = z.object({
 export type SignInResult =
   | { ok: true; redirectTo: string }
   | { ok: false; error: string };
+
+const DEMO_ROLE_COOKIE = "scholarai-demo-role";
+const demoRoleSchema = z.enum(["student", "institution", "admin"]);
+
+/** Explicit demo entry is available only when no real identity or database
+ *  is configured. Regular email/password sign-in never falls back to demo. */
+export async function enterDemoAction(roleInput: unknown): Promise<SignInResult> {
+  const parsedRole = demoRoleSchema.safeParse(roleInput);
+  if (!parsedRole.success) return { ok: false, error: "Choose a valid demo role" };
+  if (isLiveMode() || hasDatabase()) {
+    return {
+      ok: false,
+      error: "Demo sessions are only available in demo mode. Use the seeded demo account credentials instead.",
+    };
+  }
+
+  const store = await cookies();
+  store.set(DEMO_ROLE_COOKIE, parsedRole.data, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  });
+
+  return { ok: true, redirectTo: dashboardForRole(parsedRole.data) };
+}
 
 export async function signInAction(input: unknown): Promise<SignInResult> {
   const parsed = signInSchema.safeParse(input);
@@ -166,43 +217,69 @@ export async function signInAction(input: unknown): Promise<SignInResult> {
   );
   if (!gate.allowed) return { ok: false, error: throttled(gate.retryAfterMs) };
 
-  if (!isLiveMode()) return { ok: true, redirectTo: "/dashboard/student" };
+  if (!isLiveMode() || !hasDatabase()) {
+    if (!isLiveMode() && !hasDatabase()) {
+      // Real credentials must never leave an explicit sample identity active.
+      (await cookies()).delete(DEMO_ROLE_COOKIE);
+    }
+    return {
+      ok: false,
+      error:
+        "Sign-in is unavailable because persistent authentication is not configured. Set up Supabase Auth and DATABASE_URL, then try again.",
+    };
+  }
 
   const supabase = await getSupabaseServer();
   if (!supabase) return { ok: false, error: "Auth service unavailable" };
 
-  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
   if (error) return { ok: false, error: error.message };
 
-  // Role decides the landing dashboard.
-  let role = "student";
-  if (hasDatabase()) {
-    const rows = await db()
+  // A valid Auth identity without a provisioned application profile must
+  // never silently become a student. Sign it back out and fail closed.
+  let rows;
+  try {
+    rows = await db()
       .select({ role: schema.profiles.role, disabled: schema.profiles.disabled })
       .from(schema.profiles)
       .where(eqId(data.user.id))
       .limit(1);
-    if (rows[0]?.disabled) {
-      await supabase.auth.signOut();
-      return { ok: false, error: "This account has been disabled" };
-    }
-    role = rows[0]?.role ?? "student";
+  } catch (cause) {
+    console.error("profile lookup failed during sign-in:", cause);
+    await supabase.auth.signOut();
+    return { ok: false, error: "We could not load your account. Please try again." };
   }
-  const redirectTo =
-    role === "admin"
-      ? "/dashboard/admin"
-      : role === "institution"
-        ? "/dashboard/institution"
-        : "/dashboard/student";
-  return { ok: true, redirectTo };
+  if (!rows[0]) {
+    await supabase.auth.signOut();
+    return { ok: false, error: "This account is not set up yet. Contact your administrator." };
+  }
+  if (rows[0].disabled) {
+    await supabase.auth.signOut();
+    return { ok: false, error: "This account has been disabled" };
+  }
+  const role = rows[0].role;
+  return { ok: true, redirectTo: dashboardForRole(role) };
 }
 
 export async function signOutAction(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(DEMO_ROLE_COOKIE);
   if (isLiveMode()) {
     const supabase = await getSupabaseServer();
     await supabase?.auth.signOut();
   }
   redirect("/");
+}
+
+function dashboardForRole(role: "student" | "institution" | "admin"): string {
+  return role === "admin"
+    ? "/dashboard/admin"
+    : role === "institution"
+      ? "/dashboard/institution"
+      : "/dashboard/student";
 }
 
 export async function resetPasswordAction(email: string): Promise<AuthResult> {
@@ -219,7 +296,13 @@ export async function resetPasswordAction(email: string): Promise<AuthResult> {
   );
   if (!gate.allowed) return { ok: false, error: throttled(gate.retryAfterMs) };
 
-  if (!isLiveMode()) return { ok: true };
+  if (!isLiveMode() || !hasDatabase()) {
+    return {
+      ok: false,
+      error:
+        "Password reset is unavailable until Supabase Auth and DATABASE_URL are configured.",
+    };
+  }
 
   const supabase = await getSupabaseServer();
   if (!supabase) return { ok: false, error: "Auth service unavailable" };

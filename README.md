@@ -16,7 +16,7 @@ The app runs in one of two modes, chosen at runtime by which environment variabl
 |---|---|---|
 | **Trigger** | no env vars set | `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` set (auth), `DATABASE_URL` set (data) |
 | **Data** | deterministic seed data from `src/lib/data.ts`, in module memory | Postgres via Drizzle |
-| **Auth** | a single seeded student persona is signed in automatically; any credentials "succeed" | real Supabase Auth, three roles, RLS-enforced |
+| **Auth** | explicit student, institution, and admin demo entries; arbitrary credentials are rejected | real Supabase Auth, three roles, RLS-enforced |
 | **Writes** | applications persist in memory for the session; institution/admin writes no-op | persisted, audit-logged |
 | **Uploads** | unavailable (no storage backend) | private Supabase Storage bucket + verification pipeline |
 | **Realtime** | no socket; the notification bell polls | Postgres CDC on `notifications` and `applications` |
@@ -34,7 +34,7 @@ npm run dev
 
 Open http://localhost:3000. No env file, no database, no API keys.
 
-You are signed in as the seeded student persona "Aarya Sharma" (`src/lib/auth/session.ts`). Because that persona's role is `student`, the role guard confines demo mode to the student surface: the student dashboard, profile, documents, scholarship explorer, catalogue and resume analyzer. `/dashboard/institution` and `/dashboard/admin` redirect back to the student dashboard, and the sidebar hides them. Seeing those two dashboards requires live mode and the corresponding demo account.
+The login page offers separate **Student demo**, **Institution demo**, and **Admin demo** entries when live services are not configured. These open sample dashboards without accepting or pretending to authenticate email/password credentials. When Supabase and Postgres are configured, the demo entries disappear; seeded demo accounts and real accounts both authenticate through Supabase and open the role stored in their database profile.
 
 ### Quickstart — live mode
 
