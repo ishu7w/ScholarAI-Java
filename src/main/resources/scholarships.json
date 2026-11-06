@@ -1,0 +1,399 @@
+[
+  {
+    "id": "sch-merit-excellence",
+    "name": "National Merit Excellence Award",
+    "provider": "Ministry of Education",
+    "category": "Government",
+    "amount": 12000,
+    "currency": "USD",
+    "deadline": "2026-10-15",
+    "seats": 500,
+    "applicants": 8420,
+    "description": "Flagship national scholarship rewarding top academic performers with full tuition support and a research stipend.",
+    "criteria": {
+      "minCgpa": 8.5,
+      "maxIncome": null,
+      "minAttendance": 85,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": []
+    },
+    "tags": [
+      "merit",
+      "tuition",
+      "national"
+    ]
+  },
+  {
+    "id": "sch-stem-women",
+    "name": "Women in STEM Leadership Grant",
+    "provider": "Futura Foundation",
+    "category": "Women",
+    "amount": 8000,
+    "currency": "USD",
+    "deadline": "2026-09-30",
+    "seats": 200,
+    "applicants": 3150,
+    "description": "Supports women pursuing STEM degrees who show leadership potential, with mentorship from industry leaders.",
+    "criteria": {
+      "minCgpa": 7.5,
+      "maxIncome": null,
+      "minAttendance": 75,
+      "requiresResearch": false,
+      "requiresLeadership": true,
+      "womenOnly": true,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics",
+        "Physics",
+        "Biology"
+      ]
+    },
+    "tags": [
+      "stem",
+      "leadership",
+      "mentorship",
+      "python",
+      "research"
+    ]
+  },
+  {
+    "id": "sch-need-first",
+    "name": "First Horizon Need-Based Fund",
+    "provider": "Horizon Trust NGO",
+    "category": "Need-based",
+    "amount": 6500,
+    "currency": "USD",
+    "deadline": "2026-08-20",
+    "seats": 800,
+    "applicants": 12600,
+    "description": "Covers tuition and living costs for students from low-income households, with priority for first-generation students.",
+    "criteria": {
+      "minCgpa": 6,
+      "maxIncome": 15000,
+      "minAttendance": 70,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": true,
+      "locations": [],
+      "fields": []
+    },
+    "tags": [
+      "need-based",
+      "living-costs",
+      "first-generation"
+    ]
+  },
+  {
+    "id": "sch-research-grant",
+    "name": "Emerging Researcher Grant",
+    "provider": "Global Science Council",
+    "category": "Research Grant",
+    "amount": 15000,
+    "currency": "USD",
+    "deadline": "2026-11-30",
+    "seats": 120,
+    "applicants": 1900,
+    "description": "Funds undergraduate and graduate research with publication support, conference travel, and lab access.",
+    "criteria": {
+      "minCgpa": 8,
+      "maxIncome": null,
+      "minAttendance": 80,
+      "requiresResearch": true,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics",
+        "Biology",
+        "Chemistry"
+      ]
+    },
+    "tags": [
+      "research",
+      "publication",
+      "conference",
+      "machine learning"
+    ]
+  },
+  {
+    "id": "sch-corporate-tech",
+    "name": "TechForward Scholars Program",
+    "provider": "NovaTech Corp",
+    "category": "Corporate",
+    "amount": 10000,
+    "currency": "USD",
+    "deadline": "2026-09-10",
+    "seats": 300,
+    "applicants": 7800,
+    "description": "Corporate scholarship with guaranteed internship interviews for high-performing tech students.",
+    "criteria": {
+      "minCgpa": 7,
+      "maxIncome": null,
+      "minAttendance": 75,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    "tags": [
+      "internship",
+      "tech",
+      "javascript",
+      "python",
+      "react"
+    ]
+  },
+  {
+    "id": "sch-minority-access",
+    "name": "Equal Access Minority Scholarship",
+    "provider": "Unity Education Fund",
+    "category": "Minority",
+    "amount": 7000,
+    "currency": "USD",
+    "deadline": "2026-10-01",
+    "seats": 400,
+    "applicants": 5200,
+    "description": "Dedicated to students from minority communities, covering tuition and providing career counselling.",
+    "criteria": {
+      "minCgpa": 6.5,
+      "maxIncome": 40000,
+      "minAttendance": 70,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": true,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": []
+    },
+    "tags": [
+      "minority",
+      "inclusion",
+      "counselling"
+    ]
+  },
+  {
+    "id": "sch-sports-champion",
+    "name": "Champion Athlete Scholarship",
+    "provider": "National Sports Authority",
+    "category": "Sports",
+    "amount": 9000,
+    "currency": "USD",
+    "deadline": "2026-08-31",
+    "seats": 150,
+    "applicants": 2100,
+    "description": "For state and national level athletes balancing competitive sports with academics.",
+    "criteria": {
+      "minCgpa": 6,
+      "maxIncome": null,
+      "minAttendance": 60,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": true,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": []
+    },
+    "tags": [
+      "sports",
+      "athletics",
+      "national"
+    ]
+  },
+  {
+    "id": "sch-intl-mobility",
+    "name": "Global Mobility Exchange Award",
+    "provider": "World Education Alliance",
+    "category": "International",
+    "amount": 20000,
+    "currency": "USD",
+    "deadline": "2026-12-15",
+    "seats": 80,
+    "applicants": 4600,
+    "description": "Full funding for one exchange year abroad, including travel, tuition, and living allowance.",
+    "criteria": {
+      "minCgpa": 8.8,
+      "maxIncome": null,
+      "minAttendance": 90,
+      "requiresResearch": true,
+      "requiresLeadership": true,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": []
+    },
+    "tags": [
+      "international",
+      "exchange",
+      "travel",
+      "research"
+    ]
+  },
+  {
+    "id": "sch-university-dean",
+    "name": "Dean's Distinction Scholarship",
+    "provider": "State University",
+    "category": "University",
+    "amount": 5000,
+    "currency": "USD",
+    "deadline": "2026-09-05",
+    "seats": 250,
+    "applicants": 3900,
+    "description": "University merit award for students in the top decile of their cohort with strong conduct records.",
+    "criteria": {
+      "minCgpa": 8.2,
+      "maxIncome": null,
+      "minAttendance": 85,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [
+        "Delhi",
+        "Mumbai",
+        "Bengaluru"
+      ],
+      "fields": []
+    },
+    "tags": [
+      "merit",
+      "university",
+      "dean"
+    ]
+  },
+  {
+    "id": "sch-ngo-uplift",
+    "name": "Uplift Rural Talent Program",
+    "provider": "Sahara NGO",
+    "category": "NGO",
+    "amount": 4000,
+    "currency": "USD",
+    "deadline": "2026-08-25",
+    "seats": 600,
+    "applicants": 9100,
+    "description": "Targets talented students from rural and semi-urban regions with financial need and strong community involvement.",
+    "criteria": {
+      "minCgpa": 6,
+      "maxIncome": 12000,
+      "minAttendance": 65,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": true,
+      "locations": [],
+      "fields": []
+    },
+    "tags": [
+      "rural",
+      "need-based",
+      "community"
+    ]
+  },
+  {
+    "id": "sch-private-innovators",
+    "name": "Young Innovators Fellowship",
+    "provider": "Vertex Capital",
+    "category": "Private",
+    "amount": 11000,
+    "currency": "USD",
+    "deadline": "2026-10-20",
+    "seats": 100,
+    "applicants": 2700,
+    "description": "Backs student builders with shipped projects — hackathon winners and open-source contributors preferred.",
+    "criteria": {
+      "minCgpa": 7,
+      "maxIncome": null,
+      "minAttendance": 70,
+      "requiresResearch": false,
+      "requiresLeadership": true,
+      "womenOnly": false,
+      "minorityOnly": false,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Design"
+      ]
+    },
+    "tags": [
+      "innovation",
+      "hackathon",
+      "projects",
+      "javascript",
+      "react"
+    ]
+  },
+  {
+    "id": "sch-merit-stem-minority",
+    "name": "Bright Path STEM Minority Award",
+    "provider": "Lumen Foundation",
+    "category": "Minority",
+    "amount": 8500,
+    "currency": "USD",
+    "deadline": "2026-11-10",
+    "seats": 180,
+    "applicants": 2400,
+    "description": "Merit-plus-inclusion award for minority students excelling in STEM disciplines.",
+    "criteria": {
+      "minCgpa": 7.8,
+      "maxIncome": 60000,
+      "minAttendance": 80,
+      "requiresResearch": false,
+      "requiresLeadership": false,
+      "womenOnly": false,
+      "minorityOnly": true,
+      "sportsRequired": false,
+      "disabilityPreferred": false,
+      "locations": [],
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics",
+        "Physics"
+      ]
+    },
+    "tags": [
+      "stem",
+      "minority",
+      "merit",
+      "python"
+    ]
+  }
+]

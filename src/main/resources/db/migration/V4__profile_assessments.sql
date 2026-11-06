@@ -1,0 +1,2 @@
+CREATE TABLE profile_assessments (id VARCHAR(36) PRIMARY KEY, student_id VARCHAR(36) NOT NULL REFERENCES users(id), reviewer_id VARCHAR(36) NOT NULL REFERENCES users(id), sop_quality INTEGER NOT NULL, recommendation_strength INTEGER NOT NULL, behaviour_score INTEGER NOT NULL, reason VARCHAR(2000) NOT NULL, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX profile_assessments_student_idx ON profile_assessments(student_id);

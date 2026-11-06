@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:fragment="head">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Explainable scholarship matching for students and institutions."
+    />
+    <title th:text="${title + ' · ScholarAI'}">ScholarAI</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header th:fragment="header">
+      <a class="skip-link" href="#main-content">Skip to main content</a>
+      <a class="wordmark" href="/"
+        >Scholar<span>AI</span><small>THE OPPORTUNITY EDITION</small></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="/scholarships">Scholarships</a
+        ><a href="/financial-aid">Financial aid</a
+        ><a href="/resume-analyzer">Resume analyzer</a
+        ><a th:if="${user != null}" href="/dashboard">Workspace ↗</a
+        ><a th:if="${user == null}" href="/login">Sign in ↗</a>
+        <form th:if="${user != null}" th:action="@{/logout}" method="post">
+          <button class="text-button">Sign out</button>
+        </form>
+      </nav>
+    </header>
+    <aside
+      th:fragment="sidebar"
+      th:if="${user != null}"
+      class="workspace-nav"
+      id="workspace-navigation"
+    >
+      <a class="wordmark sidebar-wordmark" href="/"
+        ><span aria-hidden="true">▣</span> Scholar<span>AI</span></a
+      >
+      <button
+        class="secondary mobile-navigation"
+        type="button"
+        aria-expanded="false"
+        aria-controls="workspace-links"
+      >
+        Workspace menu ☰
+      </button>
+      <nav aria-label="Workspace" id="workspace-links">
+        <a href="/dashboard" th:href="@{/dashboard/{role}(role=${user.role})}"
+          ><span aria-hidden="true">▦</span> Overview</a
+        >
+        <th:block th:if="${user.role == 'student'}">
+          <a href="/dashboard/student/profile"
+            ><span aria-hidden="true">◉</span> My profile</a
+          >
+          <a href="/dashboard/student/documents"
+            ><span aria-hidden="true">▤</span> Documents</a
+          >
+          <a href="/dashboard/student/saved"
+            ><span aria-hidden="true">☆</span> Saved scholarships</a
+          >
+        </th:block>
+        <a href="/scholarships"
+          ><span aria-hidden="true">◇</span> Scholarships</a
+        >
+        <a href="/financial-aid"
+          ><span aria-hidden="true">▧</span> Financial aid</a
+        >
+        <a href="/catalogue"><span aria-hidden="true">▥</span> Catalogue</a>
+        <a href="/resume-analyzer"
+          ><span aria-hidden="true">⌕</span> Resume analyzer</a
+        >
+        <a
+          th:if="${user.role == 'institution'}"
+          href="/dashboard/institution/scholarships"
+          ><span aria-hidden="true">▣</span> My programs</a
+        >
+        <a th:if="${user.role == 'admin'}" href="/dashboard/admin/users"
+          ><span aria-hidden="true">▣</span> Users &amp; audit</a
+        >
+      </nav>
+      <div class="sidebar-account">
+        <strong th:text="${user.name}"></strong
+        ><span th:text="${user.email}"></span
+        ><span class="eyebrow" th:text="${user.role}"></span>
+        <form th:action="@{/logout}" method="post">
+          <button class="secondary">Sign out ↗</button>
+        </form>
+      </div>
+    </aside>
+    <div th:fragment="heading" class="page-heading">
+      <p class="eyebrow">SCHOLARAI / EXPLAINABLE OPPORTUNITIES</p>
+      <h1 th:text="${title}">ScholarAI</h1>
+      <p
+        th:if="${message}"
+        class="notice"
+        role="status"
+        th:text="${message}"
+      ></p>
+    </div>
+    <footer th:fragment="footer">
+      <p>ScholarAI <span>—</span> Every decision, explained.</p>
+      <p>Transparent weights. Real opportunities. Your next chapter.</p>
+    </footer>
+    <section
+      th:fragment="notifications"
+      th:if="${notifications != null && !notifications.isEmpty()}"
+      class="panel"
+    >
+      <h2>Notifications</h2>
+      <div th:each="n : ${notifications}" class="row">
+        <p th:text="${n.message}"></p>
+        <form
+          th:if="${!n.is_read}"
+          th:action="@{/notifications/{id}/read(id=${n.id})}"
+          method="post"
+        >
+          <button class="secondary">Mark read</button>
+        </form>
+      </div>
+    </section>
+    <section th:fragment="copilot" th:if="${user != null}" class="panel">
+      <p class="eyebrow">DETERMINISTIC GUIDANCE</p>
+      <h2>Ask your copilot.</h2>
+      <form th:action="@{/chat}" method="post" class="inline-form">
+        <label class="grow"
+          >Your question<input
+            name="question"
+            required
+            minlength="2"
+            maxlength="1000"
+            placeholder="How can I improve my score?" /></label
+        ><button>Ask ScholarAI ↗</button>
+      </form>
+    </section>
+  </body>
+</html>

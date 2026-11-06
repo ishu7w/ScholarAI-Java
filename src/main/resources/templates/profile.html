@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <p>
+        Your academic data powers transparent matching. Money values in the
+        scoring profile use annual USD equivalent, matching the original scoring
+        model.
+      </p>
+      <form
+        th:action="@{/dashboard/student/profile}"
+        method="post"
+        class="panel"
+      >
+        <div class="grid two">
+          <label
+            >Field of study<input
+              type="text"
+              name="field"
+              required
+              maxlength="120"
+              th:value="${profile['field']}" /></label
+          ><label
+            >Degree<input
+              type="text"
+              name="degree"
+              required
+              maxlength="120"
+              th:value="${profile['degree']}" /></label
+          ><label
+            >Country / location<input
+              type="text"
+              name="location"
+              required
+              maxlength="120"
+              th:value="${profile['location']}" /></label
+          ><label
+            >Gender (only for targeted scholarship criteria)<select
+              name="gender"
+            >
+              <option
+                value="other"
+                th:selected="${profile['gender'] == 'other'}"
+              >
+                Other / prefer not to say
+              </option>
+              <option
+                value="female"
+                th:selected="${profile['gender'] == 'female'}"
+              >
+                Female
+              </option>
+              <option value="male" th:selected="${profile['gender'] == 'male'}">
+                Male
+              </option>
+            </select></label
+          ><label
+            >CGPA / 10<input
+              type="number"
+              name="cgpa"
+              required
+              min="0"
+              max="10"
+              step="0.01"
+              th:value="${profile['cgpa'] ?: 0}" /></label
+          ><label
+            >Attendance %<input
+              type="number"
+              name="attendance"
+              required
+              min="0"
+              max="100"
+              step="1"
+              th:value="${profile['attendance'] ?: 0}" /></label
+          ><label
+            >Current academic year (1–10)<input
+              type="number"
+              name="year"
+              required
+              min="1"
+              max="10"
+              step="1"
+              th:value="${profile['year'] ?: 1}" /></label
+          ><label
+            >Annual family income (USD equivalent)<input
+              type="number"
+              name="familyIncome"
+              required
+              min="0"
+              max="1000000000"
+              step="0.01"
+              th:value="${profile['familyIncome'] ?: 0}" /></label
+          ><label
+            >Achievements<input
+              type="number"
+              name="achievements"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['achievements'] ?: 0}" /></label
+          ><label
+            >Research papers<input
+              type="number"
+              name="researchPapers"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['researchPapers'] ?: 0}" /></label
+          ><label
+            >Hackathons<input
+              type="number"
+              name="hackathons"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['hackathons'] ?: 0}" /></label
+          ><label
+            >Sports level (0 none, 1 district, 2 state, 3 national)<input
+              type="number"
+              name="sportsLevel"
+              required
+              min="0"
+              max="3"
+              step="1"
+              th:value="${profile['sportsLevel'] ?: 0}" /></label
+          ><label
+            >Certifications<input
+              type="number"
+              name="certifications"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['certifications'] ?: 0}" /></label
+          ><label
+            >Leadership roles<input
+              type="number"
+              name="leadershipRoles"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['leadershipRoles'] ?: 0}" /></label
+          ><label
+            >Volunteer hours<input
+              type="number"
+              name="volunteerHours"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['volunteerHours'] ?: 0}" /></label
+          ><label
+            >Projects<input
+              type="number"
+              name="projects"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['projects'] ?: 0}" /></label
+          ><label
+            >Previous scholarships<input
+              type="number"
+              name="previousScholarships"
+              required
+              min="0"
+              max="10000"
+              step="1"
+              th:value="${profile['previousScholarships'] ?: 0}" /></label
+          ><label
+            >Skills (comma-separated)<input
+              type="text"
+              name="skills"
+              maxlength="1000"
+              th:value="${profile['skills'] == null ? '' : #strings.listJoin(profile['skills'], ', ')}"
+          /></label>
+        </div>
+        <div class="checks">
+          <label class="checkbox"
+            ><input
+              type="checkbox"
+              name="minority"
+              th:checked="${profile['minority'] == true}"
+            />Minority-community applicant</label
+          ><label class="checkbox"
+            ><input
+              type="checkbox"
+              name="disability"
+              th:checked="${profile['disability'] == true}"
+            />Applicant with a disability</label
+          ><label class="checkbox"
+            ><input
+              type="checkbox"
+              name="firstGeneration"
+              th:checked="${profile['firstGeneration'] == true}"
+            />First-generation student</label
+          >
+        </div>
+        <p class="small">
+          Self-reported figures require supporting evidence. Reviewer-assessed
+          signals cannot be changed through this form.
+        </p>
+        <button>Save profile ↗</button>
+      </form>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

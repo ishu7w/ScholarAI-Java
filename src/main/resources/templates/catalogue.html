@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <form action="/scholarships" method="get" class="inline-form search">
+        <label class="grow"
+          >Search scholarships<input
+            name="q"
+            th:value="${q}"
+            placeholder="Search by name, provider, category, or skill" /></label
+        ><button>Search ↗</button>
+      </form>
+      <p th:text="${scholarships.size() + ' opportunities in this view'}"></p>
+      <p class="notice">
+        Reference programs are demonstration catalogue content. Check provider
+        terms and deadlines before relying on any award. Institutions can
+        publish live programs after approval.
+      </p>
+      <p class="notice" th:if="${scholarships.isEmpty()}" role="status">
+        No scholarships match this view. Try another search, or explore the full
+        catalogue.
+      </p>
+      <section class="grid two">
+        <article class="panel scholarship" th:each="s : ${scholarships}">
+          <p class="eyebrow" th:text="${s.category + ' / ' + s.provider}"></p>
+          <h2>
+            <a
+              th:href="@{/scholarships/{id}(id=${s.id})}"
+              th:text="${s.name}"
+            ></a>
+          </h2>
+          <p th:text="${s.description}"></p>
+          <div class="row">
+            <strong
+              class="amount"
+              th:text="${s.currency + ' ' + #numbers.formatDecimal(s.amount,1,'COMMA',0,'POINT')}"
+            ></strong
+            ><span th:text="${'Deadline ' + s.deadline}"></span>
+          </div>
+          <a class="arrow-link" th:href="@{/scholarships/{id}(id=${s.id})}"
+            >View eligibility & details ↗</a
+          >
+        </article>
+      </section>
+      <section th:if="${matches != null}" class="section">
+        <h2>Your ranked matches</h2>
+        <div class="row" th:each="m : ${matches}">
+          <a
+            th:href="@{/scholarships/{id}(id=${m.scholarship.id})}"
+            th:text="${m.scholarship.name}"
+          ></a
+          ><span
+            th:text="${m.matchScore + '% match · ' + (m.eligible ? 'Eligible' : 'Criteria missing')}"
+          ></span>
+        </div>
+      </section>
+      <section th:replace="~{layout :: copilot}"></section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

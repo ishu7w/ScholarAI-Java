@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <p>
+        Files are private to you and approved institutions reviewing your
+        submitted applications. Supported files: PDF, PNG, JPEG, up to 5 MB
+        each, 30 documents per account.
+      </p>
+      <p class="notice">
+        Automated checks compare readable PDF text with your profile. “Verified”
+        means text consistency only; it does not prove issuer, identity or
+        authenticity. Images and scans remain pending.
+      </p>
+      <form
+        th:action="@{/dashboard/student/documents}"
+        method="post"
+        enctype="multipart/form-data"
+        class="panel"
+      >
+        <div class="grid two">
+          <label
+            >Document type<select name="kind">
+              <option value="resume">Resume</option>
+              <option value="income_cert">Income certificate</option>
+              <option value="marksheet">Marksheet</option>
+              <option value="id">Identity document</option>
+            </select></label
+          ><label
+            >Your document<input
+              type="file"
+              name="file"
+              accept="application/pdf,image/png,image/jpeg"
+              required
+          /></label>
+        </div>
+        <button>Upload privately ↗</button>
+      </form>
+      <section class="section">
+        <h2>Your documents</h2>
+        <p th:if="${documents.isEmpty()}">Your document vault is empty.</p>
+        <article th:each="d : ${documents}" class="row">
+          <div>
+            <a th:href="@{/documents/{id}(id=${d.id})}" th:text="${d.name}"></a>
+            <ul th:if="${d.review['flags'] != null}">
+              <li th:each="flag : ${d.review.flags}" th:text="${flag}"></li>
+            </ul>
+            <p
+              class="small"
+              th:text="${d.kind + ' · ' + d.size_bytes + ' bytes · ' + d.status}"
+            ></p>
+          </div>
+          <form th:action="@{/documents/{id}/delete(id=${d.id})}" method="post">
+            <button class="secondary">Delete</button>
+          </form>
+        </article>
+      </section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

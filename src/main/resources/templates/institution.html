@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <p class="notice" th:if="${!user.approved}">
+        Your institution is awaiting administrator approval. You can sign in,
+        but publishing and application decisions remain locked.
+      </p>
+      <div class="actions">
+        <a
+          class="button"
+          th:if="${user.approved}"
+          href="/dashboard/institution/scholarships/new"
+          >Publish a scholarship ↗</a
+        >
+      </div>
+      <section class="section">
+        <h2>Your scholarship programs</h2>
+        <p th:if="${programs.isEmpty()}">
+          No programs yet. Approved institutions can publish their first
+          opportunity here.
+        </p>
+        <article th:each="s : ${programs}" class="row">
+          <div>
+            <h3 th:text="${s.name}"></h3>
+            <p th:text="${s.status + ' · Deadline ' + s.deadline}"></p>
+          </div>
+          <a th:href="@{/dashboard/institution/scholarships/{id}(id=${s.id})}"
+            >Edit program ↗</a
+          >
+        </article>
+      </section>
+      <section class="section">
+        <h2>Ranked applicant queue</h2>
+        <p>
+          Ranking uses the score frozen at submission. Review flags are
+          heuristic prompts for human investigation, not proof of misconduct.
+        </p>
+        <p th:if="${applications.isEmpty()}">No applications received yet.</p>
+        <article class="panel" th:each="a : ${applications}">
+          <div class="row">
+            <div>
+              <p class="eyebrow" th:text="${a.scholarship.name}"></p>
+              <h3 th:text="${a.student_name}"></h3>
+            </div>
+            <p class="amount" th:text="${a.ai.score + '/100'}"></p>
+            <strong th:text="${a.status}"></strong>
+          </div>
+          <div th:if="${!a.documents.isEmpty()}">
+            <h4>Supporting documents shared at submission</h4>
+            <ul>
+              <li th:each="d : ${a.documents}">
+                <a
+                  th:href="@{/documents/{id}(id=${d.id})}"
+                  th:text="${d.name}"
+                ></a
+                ><span th:text="${' · ' + d.kind + ' · ' + d.status}"></span>
+              </li>
+            </ul>
+          </div>
+          <details>
+            <summary>Explain this ranking</summary>
+            <div class="row" th:each="c : ${a.ai.components}">
+              <div>
+                <span th:text="${c.label}"></span>
+                <p
+                  class="small"
+                  th:if="${c['detail'] != null}"
+                  th:text="${c.detail}"
+                ></p>
+              </div>
+              <span th:text="${c.weighted}"></span>
+            </div>
+            <p th:each="signal : ${a.ai.fraudSignals}" th:text="${signal}"></p>
+          </details>
+          <form
+            th:unless="${a.status == 'approved' or a.status == 'rejected'}"
+            th:action="@{/applications/{id}/decision(id=${a.id})}"
+            method="post"
+          >
+            <div class="grid two">
+              <label
+                >Decision<select name="status">
+                  <option value="under_review">Under review</option>
+                  <option value="approved">Approve</option>
+                  <option value="rejected">Reject</option>
+                </select></label
+              ><label
+                >Reason<input
+                  name="reason"
+                  required
+                  minlength="5"
+                  maxlength="2000"
+              /></label>
+            </div>
+            <button>Record decision ↗</button>
+          </form>
+          <p th:if="${a.reason != ''}" th:text="${a.reason}"></p>
+        </article>
+      </section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

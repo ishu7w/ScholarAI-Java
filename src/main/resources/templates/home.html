@@ -1,0 +1,1778 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  class="familjengrotesk_1cfd4808-module__GBToxW__variable displayalias_836962ab-module__1_Bgrq__variable splinesansmono_e7923b8c-module__j3z7ZW__variable h-full antialiased"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Explainable scholarship matching for students and institutions"
+    />
+    <title>ScholarAI — Explainable Scholarship Matching</title>
+    <link rel="stylesheet" href="/original-design.css" />
+    <script src="/home.js" defer=""></script>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  </head>
+  <body class="min-h-full flex flex-col">
+    <div hidden=""></div>
+    <div class="fixed inset-x-0 top-0 z-[60] h-[2px] bg-transparent">
+      <div class="h-full w-full origin-left scale-x-0 bg-primary"></div>
+    </div>
+    <div
+      aria-hidden="true"
+      class="pointer-events-none invisible fixed left-0 top-0 z-[90] h-2 w-2 bg-primary opacity-0 mix-blend-normal"
+    ></div>
+    <header class="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+      <a class="skip-link" href="#main-content">Skip to main content</a>
+      <nav
+        class="mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-5 py-3 transition-all duration-300 bg-transparent"
+        aria-label="Main navigation"
+      >
+        <a class="flex items-center gap-2.5" href="/"
+          ><span class="flex h-9 w-9 items-center justify-center bg-foreground"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-graduation-cap h-5 w-5 text-background"
+              aria-hidden="true"
+            >
+              <path
+                d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"
+              ></path>
+              <path d="M22 10v6"></path>
+              <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg></span
+          ><span
+            class="font-[family-name:var(--font-space-grotesk)] text-lg font-bold tracking-tight"
+            >Scholar<span class="text-gradient">AI</span></span
+          ></a
+        >
+        <ul class="hidden items-center gap-1 md:flex">
+          <li>
+            <a
+              class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:bg-[rgba(21,21,21,0.05)] hover:text-foreground"
+              href="/#features"
+              >Features</a
+            >
+          </li>
+          <li>
+            <a
+              class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:bg-[rgba(21,21,21,0.05)] hover:text-foreground"
+              href="/#how"
+              >How it works</a
+            >
+          </li>
+          <li>
+            <a
+              class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:bg-[rgba(21,21,21,0.05)] hover:text-foreground"
+              href="/scholarships"
+              >Scholarships</a
+            >
+          </li>
+          <li>
+            <a
+              class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:bg-[rgba(21,21,21,0.05)] hover:text-foreground"
+              href="/catalogue"
+              >Catalogue</a
+            >
+          </li>
+          <li>
+            <a
+              class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:bg-[rgba(21,21,21,0.05)] hover:text-foreground"
+              href="/#pricing"
+              >Pricing</a
+            >
+          </li>
+          <li>
+            <a
+              class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:bg-[rgba(21,21,21,0.05)] hover:text-foreground"
+              href="/#faq"
+              >FAQ</a
+            >
+          </li>
+        </ul>
+        <div class="hidden items-center gap-3 md:flex">
+          <a
+            class="rounded-lg px-4 py-2 text-sm text-muted transition-colors hover:text-foreground"
+            href="/login"
+            >Sign in</a
+          ><a class="btn-primary !px-5 !py-2 text-sm" href="/register"
+            >Get started</a
+          >
+        </div>
+        <button
+          class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-foreground md:hidden"
+          aria-label="Open menu"
+          aria-expanded="false"
+          data-home-menu=""
+          aria-controls="mobile-home-nav"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-menu h-5 w-5"
+            aria-hidden="true"
+          >
+            <path d="M4 5h16"></path>
+            <path d="M4 12h16"></path>
+            <path d="M4 19h16"></path>
+          </svg>
+        </button>
+      </nav>
+      <nav
+        id="mobile-home-nav"
+        hidden=""
+        class="glass-strong p-4"
+        aria-label="Mobile navigation"
+      >
+        <a href="/#features" class="block px-4 py-3">Features</a
+        ><a href="/#how" class="block px-4 py-3">How it works</a
+        ><a href="/scholarships" class="block px-4 py-3">Scholarships</a
+        ><a href="/catalogue" class="block px-4 py-3">Catalogue</a
+        ><a href="/financial-aid" class="block px-4 py-3">Financial aid</a
+        ><a href="/login" class="block px-4 py-3">Sign in</a
+        ><a href="/register" class="block px-4 py-3">Get started</a>
+      </nav>
+    </header>
+    <main id="main-content" tabindex="-1">
+      <section
+        class="relative flex min-h-screen items-center overflow-hidden pt-28 pb-16"
+      >
+        <div
+          class="grid-bg pointer-events-none absolute inset-0"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-6 lg:grid-cols-2"
+        >
+          <div>
+            <div data-hero-badge="true" class="mono-label mb-6 text-primary">
+              Explainable AI — Trusted by 40+ institutions
+            </div>
+            <h1
+              class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl"
+            >
+              <span class="block overflow-hidden pb-[0.12em] mb-[-0.12em]"
+                ><span data-hero-line="true" class="block"
+                  >Every deserving student,</span
+                ></span
+              ><span class="block overflow-hidden pb-[0.12em] mb-[-0.12em]"
+                ><span data-hero-line="true" class="block"
+                  ><span class="text-outline">matched by AI.</span></span
+                ></span
+              ><span class="block overflow-hidden pb-[0.12em] mb-[-0.12em]"
+                ><span data-hero-line="true" class="block"
+                  >Every decision, explained.</span
+                ></span
+              >
+            </h1>
+            <p
+              data-hero-sub="true"
+              class="mt-6 max-w-lg text-lg leading-relaxed text-muted"
+            >
+              ScholarAI evaluates 25+ signals — academics, need, achievements,
+              research — to match students with the right scholarships and give
+              institutions a fair, auditable ranking of every applicant.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-4">
+              <span data-hero-cta="true"
+                ><a href="/register"
+                  ><span class="cursor-pointer btn-primary text-base">
+                    Find my scholarships
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-arrow-right h-4 w-4"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14"></path>
+                      <path d="m12 5 7 7-7 7"></path></svg></span></a></span
+              ><span data-hero-cta="true"
+                ><a href="/dashboard/institution"
+                  ><span class="cursor-pointer btn-ghost text-base">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-shield-check h-4 w-4"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                      ></path>
+                      <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                    For institutions
+                  </span></a
+                ></span
+              >
+            </div>
+            <div
+              data-hero-sub="true"
+              class="mt-10 flex items-center gap-6 text-sm text-muted"
+            >
+              <div>
+                <span class="font-semibold text-foreground">$48M+</span> awarded
+              </div>
+              <div class="h-4 w-px bg-[rgba(21,21,21,0.16)]"></div>
+              <div>
+                <span class="font-semibold text-foreground">92%</span> match
+                accuracy
+              </div>
+              <div class="h-4 w-px bg-[rgba(21,21,21,0.16)]"></div>
+              <div>
+                <span class="font-semibold text-foreground">120k</span> students
+              </div>
+            </div>
+          </div>
+          <div
+            class="relative mx-auto aspect-square w-full max-w-[480px]"
+            data-hero-viz="true"
+          >
+            <svg
+              viewBox="0 0 500 500"
+              class="h-full w-full"
+              aria-label="Animated visualization of an AI matching engine"
+              role="img"
+            >
+              <rect
+                data-pulse="true"
+                x="202"
+                y="202"
+                width="96"
+                height="96"
+                fill="none"
+                stroke="rgba(21,21,21,0.35)"
+                stroke-width="1"
+              ></rect>
+              <rect
+                data-pulse="true"
+                x="202"
+                y="202"
+                width="96"
+                height="96"
+                fill="none"
+                stroke="rgba(21,21,21,0.35)"
+                stroke-width="1"
+              ></rect>
+              <rect
+                data-pulse="true"
+                x="202"
+                y="202"
+                width="96"
+                height="96"
+                fill="none"
+                stroke="rgba(21,21,21,0.35)"
+                stroke-width="1"
+              ></rect>
+              <circle
+                cx="250"
+                cy="250"
+                r="90"
+                fill="none"
+                stroke="rgba(21,21,21,0.16)"
+                stroke-width="1"
+                stroke-dasharray="3 6"
+              ></circle>
+              <circle
+                cx="250"
+                cy="250"
+                r="150"
+                fill="none"
+                stroke="rgba(21,21,21,0.16)"
+                stroke-width="1"
+                stroke-dasharray="3 6"
+              ></circle>
+              <circle
+                cx="250"
+                cy="250"
+                r="210"
+                fill="none"
+                stroke="rgba(21,21,21,0.16)"
+                stroke-width="1"
+                stroke-dasharray="3 6"
+              ></circle>
+              <g data-orbit="1">
+                <rect
+                  x="244"
+                  y="154"
+                  width="12"
+                  height="12"
+                  fill="#C4442C"
+                ></rect>
+                <rect
+                  x="335"
+                  y="245"
+                  width="10"
+                  height="10"
+                  fill="#151515"
+                ></rect>
+                <rect
+                  x="244"
+                  y="334"
+                  width="12"
+                  height="12"
+                  fill="#151515"
+                ></rect>
+              </g>
+              <g data-orbit="2">
+                <rect
+                  x="244"
+                  y="94"
+                  width="12"
+                  height="12"
+                  fill="#151515"
+                ></rect>
+                <rect
+                  x="112"
+                  y="319"
+                  width="12"
+                  height="12"
+                  fill="#C4442C"
+                ></rect>
+                <rect
+                  x="377"
+                  y="320"
+                  width="10"
+                  height="10"
+                  fill="#151515"
+                ></rect>
+              </g>
+              <g data-orbit="3">
+                <rect
+                  x="245"
+                  y="35"
+                  width="10"
+                  height="10"
+                  fill="#151515"
+                ></rect>
+                <rect
+                  x="63"
+                  y="350"
+                  width="10"
+                  height="10"
+                  fill="#151515"
+                ></rect>
+                <rect
+                  x="426"
+                  y="349"
+                  width="12"
+                  height="12"
+                  fill="#C4442C"
+                ></rect>
+              </g>
+              <rect
+                data-core="true"
+                x="202"
+                y="202"
+                width="96"
+                height="96"
+                fill="#151515"
+              ></rect>
+              <text
+                x="250"
+                y="258"
+                text-anchor="middle"
+                fill="#E8E6DF"
+                font-size="22"
+                font-weight="700"
+                font-family="var(--font-familjen)"
+              >
+                AI
+              </text>
+            </svg>
+            <div
+              data-hero-float="true"
+              class="glass-strong animate-float absolute left-0 top-16 px-4 py-3 preserved-style-0"
+            >
+              <div class="text-xs text-muted">Match score</div>
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-success"
+              >
+                94%
+              </div>
+            </div>
+            <div
+              data-hero-float="true"
+              class="glass-strong animate-float absolute -right-2 top-32 px-4 py-3 preserved-style-1"
+            >
+              <div class="text-xs text-muted">Fraud risk</div>
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-accent"
+              >
+                Clear
+              </div>
+            </div>
+            <div
+              data-hero-float="true"
+              class="glass-strong animate-float absolute bottom-16 left-6 px-4 py-3 preserved-style-2"
+            >
+              <div class="text-xs text-muted">Eligibility</div>
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-xl font-bold text-primary-bright"
+              >
+                8 of 12
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="relative py-24">
+        <div class="mx-auto max-w-6xl px-6">
+          <p class="mb-6 text-xs text-muted">
+            Illustrative metrics from the original product demonstration; these
+            are not live deployment statistics.
+          </p>
+          <div class="landing-stats grid grid-cols-2 gap-6 lg:grid-cols-4">
+            <div class="glass p-6 text-center">
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-gradient sm:text-5xl"
+              >
+                <span>$48M+</span>
+              </div>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                Scholarships awarded through the platform
+              </p>
+            </div>
+            <div class="glass p-6 text-center">
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-gradient sm:text-5xl"
+              >
+                <span>120,000+</span>
+              </div>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                Student profiles evaluated by the AI engine
+              </p>
+            </div>
+            <div class="glass p-6 text-center">
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-gradient sm:text-5xl"
+              >
+                <span>92%</span>
+              </div>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                Match accuracy validated against committee outcomes
+              </p>
+            </div>
+            <div class="glass p-6 text-center">
+              <div
+                class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-gradient sm:text-5xl"
+              >
+                <span>3.2s</span>
+              </div>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                Average time to a full explainable ranking
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="how" class="relative py-24">
+        <div class="mx-auto max-w-6xl px-6">
+          <div>
+            <h2
+              class="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight sm:text-5xl"
+            >
+              How the AI decides
+            </h2>
+          </div>
+          <p class="mt-4 max-w-xl text-muted">
+            No black boxes. Every score traces back to a published weight and a
+            verifiable input.
+          </p>
+          <div class="relative mt-16 pl-8">
+            <div
+              data-step-line="true"
+              class="absolute left-[7px] top-2 h-[calc(100%-2rem)] w-px preserved-style-3"
+            ></div>
+            <div class="space-y-16">
+              <div data-step="true" class="relative">
+                <span
+                  class="absolute -left-8 top-1 h-4 w-4 rounded-full border-2 border-primary bg-background"
+                ></span>
+                <div
+                  class="font-[family-name:var(--font-geist-mono)] text-sm text-primary-bright"
+                >
+                  01
+                </div>
+                <h3
+                  class="mt-2 font-[family-name:var(--font-space-grotesk)] text-2xl font-semibold"
+                >
+                  Build your profile once
+                </h3>
+                <p class="mt-3 max-w-2xl leading-relaxed text-muted">
+                  Academics, income, achievements, research, documents — 25+
+                  signals, entered once, verified by the OCR pipeline, reused
+                  for every application.
+                </p>
+              </div>
+              <div data-step="true" class="relative">
+                <span
+                  class="absolute -left-8 top-1 h-4 w-4 rounded-full border-2 border-primary bg-background"
+                ></span>
+                <div
+                  class="font-[family-name:var(--font-geist-mono)] text-sm text-primary-bright"
+                >
+                  02
+                </div>
+                <h3
+                  class="mt-2 font-[family-name:var(--font-space-grotesk)] text-2xl font-semibold"
+                >
+                  AI scores every dimension
+                </h3>
+                <p class="mt-3 max-w-2xl leading-relaxed text-muted">
+                  A transparent weighted model scores each area — Academic 22%,
+                  Financial Need 18%, Achievements 12% — nothing hidden, every
+                  weight published.
+                </p>
+              </div>
+              <div data-step="true" class="relative">
+                <span
+                  class="absolute -left-8 top-1 h-4 w-4 rounded-full border-2 border-primary bg-background"
+                ></span>
+                <div
+                  class="font-[family-name:var(--font-geist-mono)] text-sm text-primary-bright"
+                >
+                  03
+                </div>
+                <h3
+                  class="mt-2 font-[family-name:var(--font-space-grotesk)] text-2xl font-semibold"
+                >
+                  Matches ranked with reasons
+                </h3>
+                <p class="mt-3 max-w-2xl leading-relaxed text-muted">
+                  Each scholarship gets a match score, a winning probability,
+                  and a plain-language explanation of why it fits — or exactly
+                  what's missing.
+                </p>
+              </div>
+              <div data-step="true" class="relative">
+                <span
+                  class="absolute -left-8 top-1 h-4 w-4 rounded-full border-2 border-primary bg-background"
+                ></span>
+                <div
+                  class="font-[family-name:var(--font-geist-mono)] text-sm text-primary-bright"
+                >
+                  04
+                </div>
+                <h3
+                  class="mt-2 font-[family-name:var(--font-space-grotesk)] text-2xl font-semibold"
+                >
+                  Institutions decide fairly
+                </h3>
+                <p class="mt-3 max-w-2xl leading-relaxed text-muted">
+                  Committees see the same explainable ranking, fraud signals,
+                  and verification status — decisions become auditable instead
+                  of arbitrary.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="features" class="relative py-24">
+        <div class="mx-auto max-w-6xl px-6">
+          <div>
+            <h2
+              class="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight sm:text-5xl"
+            >
+              One platform. Both sides of the table.
+            </h2>
+          </div>
+          <p class="mt-4 max-w-xl text-muted">
+            Students get matched. Institutions get fairness. Everyone gets
+            receipts.
+          </p>
+          <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-brain h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 18V5"></path>
+                    <path
+                      d="M15 13a4.17 4.17 0 01-3-4 4.17 4.17 0 01-3 4"
+                    ></path>
+                    <path
+                      d="M17.707 6.294A3 3 0 1012 5a3 3 0 10-5.707 1.294"
+                    ></path>
+                    <path d="M17.996 5.125a4 4 0 012.526 5.77"></path>
+                    <path d="M18 18a4 4 0 002-7.465"></path>
+                    <path
+                      d="M19.967 17.482a4 4 0 11-7.967.517 4 4 0 11-7.967-.517"
+                    ></path>
+                    <path d="M6 18a4 4 0 01-2-7.465"></path>
+                    <path d="M6.004 5.125a4 4 0 00-2.526 5.77"></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Explainable scoring</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  A weighted model across 25+ signals. Every recommendation
+                  ships with its full score breakdown.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-trophy h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2"></path>
+                    <path d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2"></path>
+                    <path
+                      d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3"
+                    ></path>
+                    <path d="M4 22h16"></path>
+                    <path
+                      d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"
+                    ></path>
+                    <path
+                      d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3"
+                    ></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Smart matching</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Eligibility prediction, match scores, and win probability
+                  across 12 scholarship categories.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-scan-line h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                    <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                    <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                    <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+                    <path d="M7 12h10"></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">OCR verification</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Income certificates, marksheets, and IDs verified with
+                  cross-document consistency checks.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-fingerprint-pattern lucide-fingerprint h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"></path>
+                    <path d="M14 13.12c0 2.38 0 6.38-1 8.88"></path>
+                    <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"></path>
+                    <path d="M2 12a10 10 0 0 1 18-6"></path>
+                    <path d="M2 16h.01"></path>
+                    <path d="M21.8 16c.2-2 .131-5.354 0-6"></path>
+                    <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"></path>
+                    <path d="M8.65 22c.21-.66.45-1.32.57-2"></path>
+                    <path d="M9 6.8a6 6 0 0 1 9 5.2v2"></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Fraud detection</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Statistical anomaly signals — mismatched claims get flagged
+                  before committees see them.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-file-search h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+                    ></path>
+                    <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+                    <circle cx="11.5" cy="14.5" r="2.5"></circle>
+                    <path d="M13.3 16.3 15 18"></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Resume intelligence</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  ATS scoring, skill extraction, and targeted suggestions tuned
+                  for scholarship review.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-route h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path
+                      d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"
+                    ></path>
+                    <circle cx="18" cy="5" r="3"></circle></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Personal roadmap</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Quarter-by-quarter improvement plan with projected score
+                  impact for each action.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-hand-coins h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"
+                    ></path>
+                    <path
+                      d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"
+                    ></path>
+                    <path d="m2 16 6 6"></path>
+                    <circle cx="16" cy="9" r="2.9"></circle>
+                    <circle cx="6" cy="5" r="3"></circle></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Financial aid planner</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Estimate your study-cost gap, track application tasks, and
+                  find official scholarship and grant programs worldwide.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-chart-column lucide-bar-chart-3 h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                    <path d="M18 17V9"></path>
+                    <path d="M13 17V5"></path>
+                    <path d="M8 17v-3"></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">Committee analytics</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Ranking heatmaps, demographics, geographic distribution, and
+                  exportable reports.
+                </p>
+              </div>
+            </div>
+            <div class="will-change-transform">
+              <div class="glass p-6 card-hover cursor-pointer h-full">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-message-square-text h-5 w-5 text-primary-bright"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"
+                    ></path>
+                    <path d="M7 11h10"></path>
+                    <path d="M7 15h6"></path>
+                    <path d="M7 7h8"></path></svg
+                ></span>
+                <h3 class="mt-4 font-semibold">AI copilot</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  Ask why you matched, why you didn't, and what single change
+                  raises your odds the most.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="relative py-24">
+        <div class="mx-auto max-w-6xl px-6">
+          <div>
+            <h2
+              class="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight sm:text-5xl"
+            >
+              Trusted on both sides of the decision
+            </h2>
+          </div>
+          <div class="mt-14 grid gap-6 lg:grid-cols-3">
+            <div class="glass p-6 flex h-full flex-col">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-quote h-6 w-6 text-primary-bright/60"
+                aria-hidden="true"
+              >
+                <path
+                  d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                ></path>
+                <path
+                  d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                ></path>
+              </svg>
+              <p
+                class="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/90"
+              >
+                We replaced a three-week manual shortlisting cycle with a
+                two-hour review of ScholarAI's ranked list. The explainability
+                panel is what won over our committee — every score has a paper
+                trail.
+              </p>
+              <div class="mt-6 flex items-center gap-3">
+                <div
+                  class="flex shrink-0 items-center justify-center border border-[rgba(21,21,21,0.16)] bg-background font-[family-name:var(--font-spline-mono)] font-semibold text-foreground preserved-style-4"
+                  aria-hidden="true"
+                >
+                  DK
+                </div>
+                <div>
+                  <div class="text-sm font-semibold">Dr. Kavita Rao</div>
+                  <div class="text-xs text-muted">
+                    Dean of Student Aid, State University
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="glass p-6 flex h-full flex-col">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-quote h-6 w-6 text-primary-bright/60"
+                aria-hidden="true"
+              >
+                <path
+                  d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                ></path>
+                <path
+                  d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                ></path>
+              </svg>
+              <p
+                class="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/90"
+              >
+                I had no idea I qualified for a research grant. ScholarAI
+                flagged it, told me exactly which two documents I was missing,
+                and I was funded within a month.
+              </p>
+              <div class="mt-6 flex items-center gap-3">
+                <div
+                  class="flex shrink-0 items-center justify-center border border-[rgba(21,21,21,0.16)] bg-background font-[family-name:var(--font-spline-mono)] font-semibold text-foreground preserved-style-5"
+                  aria-hidden="true"
+                >
+                  RI
+                </div>
+                <div>
+                  <div class="text-sm font-semibold">Rohan Iyer</div>
+                  <div class="text-xs text-muted">
+                    M.Tech student, funded ₹4.2L
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="glass p-6 flex h-full flex-col">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-quote h-6 w-6 text-primary-bright/60"
+                aria-hidden="true"
+              >
+                <path
+                  d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                ></path>
+                <path
+                  d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                ></path>
+              </svg>
+              <p
+                class="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/90"
+              >
+                The fraud signals alone paid for the platform. We caught four
+                inconsistent income declarations in the first cycle — cases we
+                would previously never have noticed.
+              </p>
+              <div class="mt-6 flex items-center gap-3">
+                <div
+                  class="flex shrink-0 items-center justify-center border border-[rgba(21,21,21,0.16)] bg-background font-[family-name:var(--font-spline-mono)] font-semibold text-foreground preserved-style-6"
+                  aria-hidden="true"
+                >
+                  EC
+                </div>
+                <div>
+                  <div class="text-sm font-semibold">Emily Chen</div>
+                  <div class="text-xs text-muted">
+                    Program Director, Futura Foundation
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="faq" class="relative py-24">
+        <div class="mx-auto max-w-3xl px-6">
+          <div>
+            <h2
+              class="text-center font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight sm:text-5xl"
+            >
+              Questions, answered plainly
+            </h2>
+          </div>
+          <div class="mt-12 space-y-3">
+            <details class="glass overflow-hidden" open="">
+              <summary
+                class="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                How is the AI score calculated? +
+              </summary>
+              <p class="px-6 pb-5 text-[15px] leading-relaxed text-muted">
+                A published weighted model: Academic Performance 22%, Financial
+                Need 18%, Achievements 12%, Research 10%, Leadership 8%,
+                Projects &amp; Skills 8%, SOP 8%, Community Service 7%,
+                Recommendations 4%, Behaviour 3%. Every sub-score shows the
+                exact inputs used — you can audit your own number.
+              </p>
+            </details>
+            <details class="glass overflow-hidden">
+              <summary
+                class="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                Is demographic data used against applicants? +
+              </summary>
+              <p class="px-6 pb-5 text-[15px] leading-relaxed text-muted">
+                Never. Gender, community, and disability fields are used
+                exclusively for inclusion preferences on scholarships that
+                explicitly target those groups (e.g. women-in-STEM). They are
+                never used as penalties, and the fairness note on every match
+                documents this.
+              </p>
+            </details>
+            <details class="glass overflow-hidden">
+              <summary
+                class="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                How does document verification work? +
+              </summary>
+              <p class="px-6 pb-5 text-[15px] leading-relaxed text-muted">
+                Text-based PDFs are checked against your profile. Differences
+                are flagged for review. Images and scanned PDFs remain pending.
+                A text match does not establish document authenticity.
+              </p>
+            </details>
+            <details class="glass overflow-hidden">
+              <summary
+                class="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                What happens when I'm rejected? +
+              </summary>
+              <p class="px-6 pb-5 text-[15px] leading-relaxed text-muted">
+                You get the actual reason: which criteria failed, by how much,
+                and the shortest path to eligibility. Rejection without
+                explanation is the exact problem this platform exists to fix.
+              </p>
+            </details>
+            <details class="glass overflow-hidden">
+              <summary
+                class="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                Can institutions customize the scoring weights? +
+              </summary>
+              <p class="px-6 pb-5 text-[15px] leading-relaxed text-muted">
+                Institutions define eligibility criteria for each scholarship.
+                The ten scoring weights are fixed and published so every ranking
+                remains reproducible.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+      <section id="pricing" class="relative py-24">
+        <div class="mx-auto max-w-6xl px-6">
+          <div>
+            <h2
+              class="text-center font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight sm:text-5xl"
+            >
+              Free for students. Fair for everyone.
+            </h2>
+          </div>
+          <div class="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
+            <div class="glass relative flex h-full flex-col rounded-2xl p-8">
+              <h3
+                class="font-[family-name:var(--font-space-grotesk)] text-lg font-semibold"
+              >
+                Students
+              </h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span
+                  class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold"
+                  >Free</span
+                ><span class="text-sm text-muted">forever</span>
+              </div>
+              <p class="mt-3 text-sm text-muted">
+                Matching should never cost the people who need funding.
+              </p>
+              <ul class="mt-6 flex-1 space-y-3">
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Unlimited scholarship matching</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Full explainable score breakdown</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Resume analyzer + ATS score</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Personal improvement roadmap</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >AI copilot &amp; deadline tracking</span
+                  >
+                </li>
+              </ul>
+              <a class="mt-8" href="/register"
+                ><span class="btn-ghost w-full text-sm"
+                  >Create free account</span
+                ></a
+              >
+            </div>
+            <div
+              class="glass relative flex h-full flex-col rounded-2xl p-8 border-foreground lg:-my-3 lg:py-11"
+            >
+              <span
+                class="badge bg-transparent text-primary absolute -top-3 left-1/2 -translate-x-1/2"
+                >Most popular</span
+              >
+              <h3
+                class="font-[family-name:var(--font-space-grotesk)] text-lg font-semibold"
+              >
+                Institution
+              </h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span
+                  class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold"
+                  >$499</span
+                ><span class="text-sm text-muted">/month</span>
+              </div>
+              <p class="mt-3 text-sm text-muted">
+                For universities and foundations running selection at scale.
+              </p>
+              <ul class="mt-6 flex-1 space-y-3">
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Everything in Students</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >AI applicant ranking + heatmaps</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >PDF text consistency checks</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Fraud detection signals</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Custom eligibility criteria</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Ranked committee review</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85">Full audit log</span>
+                </li>
+              </ul>
+              <a class="mt-8" href="/register"
+                ><span class="btn-primary w-full text-sm"
+                  >Start 30-day pilot</span
+                ></a
+              >
+            </div>
+            <div class="glass relative flex h-full flex-col rounded-2xl p-8">
+              <h3
+                class="font-[family-name:var(--font-space-grotesk)] text-lg font-semibold"
+              >
+                Government
+              </h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span
+                  class="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold"
+                  >Custom</span
+                ><span class="text-sm text-muted"></span>
+              </div>
+              <p class="mt-3 text-sm text-muted">
+                National-scale programs with compliance requirements.
+              </p>
+              <ul class="mt-6 flex-1 space-y-3">
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Everything in Institution</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Self-hosted deployment</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Deployment and security documentation</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Role-based access controls</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-success"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path></svg
+                  ><span class="text-foreground/85"
+                    >Published scoring model</span
+                  >
+                </li>
+              </ul>
+              <a class="mt-8" href="/register"
+                ><span class="btn-ghost w-full text-sm">Talk to us</span></a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="relative py-24">
+        <div class="mx-auto max-w-4xl px-6">
+          <div class="">
+            <div
+              class="glass-strong relative overflow-hidden rounded-3xl p-10 text-center sm:p-16"
+            >
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-0 opacity-30 preserved-style-8"
+              ></div>
+              <h2
+                class="relative font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight sm:text-5xl"
+              >
+                Your scholarship is out there.<br /><span class="text-gradient"
+                  >Let the AI find it.</span
+                >
+              </h2>
+              <p class="relative mx-auto mt-4 max-w-md text-muted">
+                Two minutes to build a profile. A lifetime of not missing
+                deadlines you never knew existed.
+              </p>
+              <div class="relative mt-8 flex justify-center">
+                <a href="/register"
+                  ><span class="cursor-pointer btn-primary px-8 py-4 text-base">
+                    Get matched now
+                  </span></a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="border-t border-[rgba(21,21,21,0.16)] py-14">
+      <div
+        class="mx-auto grid max-w-6xl gap-10 px-6 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        <div>
+          <div class="flex items-center gap-2.5">
+            <span class="flex h-8 w-8 items-center justify-center bg-foreground"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-graduation-cap h-4 w-4 text-background"
+                aria-hidden="true"
+              >
+                <path
+                  d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"
+                ></path>
+                <path d="M22 10v6"></path>
+                <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg></span
+            ><span
+              class="font-[family-name:var(--font-space-grotesk)] font-bold"
+              >Scholar<span class="text-gradient">AI</span></span
+            >
+          </div>
+          <p class="mt-4 text-sm leading-relaxed text-muted">
+            Fair, explainable, AI-driven scholarship matching for students and
+            institutions.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold uppercase tracking-wider text-muted">
+            Product
+          </h4>
+          <ul class="mt-4 space-y-2.5">
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/scholarships"
+                >Scholarships</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/financial-aid"
+                >Financial Aid Planner</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/catalogue"
+                >Catalogue</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/resume-analyzer"
+                >Resume Analyzer</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/dashboard/student"
+                >AI Insights</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/dashboard/institution"
+                >Analytics</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold uppercase tracking-wider text-muted">
+            Dashboards
+          </h4>
+          <ul class="mt-4 space-y-2.5">
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/dashboard/student"
+                >Student</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/dashboard/institution"
+                >Institution</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/dashboard/admin"
+                >Admin</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold uppercase tracking-wider text-muted">
+            Company
+          </h4>
+          <ul class="mt-4 space-y-2.5">
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/#how"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/#pricing"
+                >Pricing</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/#faq"
+                >FAQ</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                href="/login"
+                >Sign in</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="mx-auto mt-12 flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-[rgba(21,21,21,0.16)] px-6 pt-6 text-xs text-muted"
+      >
+        <span>© 2026 ScholarAI. Built for fair access to education.</span
+        ><span>Transparent model · Private accounts · Auditable decisions</span>
+      </div>
+    </footer>
+    <button
+      class="fixed bottom-6 right-6 z-50 flex h-14 w-14 cursor-pointer items-center justify-center bg-foreground text-background transition-colors hover:bg-accent"
+      aria-label="Open AI assistant"
+      data-open-copilot=""
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-sparkles lucide-stars h-6 w-6"
+        aria-hidden="true"
+      >
+        <path
+          d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+        ></path>
+        <path d="M20 2v4"></path>
+        <path d="M22 4h-4"></path>
+        <circle cx="4" cy="20" r="2"></circle></svg
+      ><span
+        class="absolute right-1.5 top-1.5 h-1.5 w-1.5 bg-primary"
+        aria-hidden="true"
+      ></span>
+    </button>
+    <dialog id="home-copilot" aria-labelledby="copilot-title">
+      <button type="button" data-close-copilot aria-label="Close copilot">
+        ×
+      </button>
+      <h2 id="copilot-title">ScholarAI copilot</h2>
+      <p>Ask about your score, matches, applications, or next steps.</p>
+      <div id="copilot-messages" role="log" aria-live="polite"></div>
+      <form id="copilot-form">
+        <label for="copilot-question">Your question</label
+        ><input
+          id="copilot-question"
+          name="question"
+          required
+          minlength="2"
+          maxlength="1000"
+        /><button type="submit">Send ↗</button>
+      </form>
+    </dialog>
+  </body>
+</html>

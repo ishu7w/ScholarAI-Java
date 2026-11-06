@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <a href="/scholarships">← All scholarships</a>
+      <div th:replace="~{layout :: heading}"></div>
+      <div class="grid two">
+        <section class="panel">
+          <p
+            class="eyebrow"
+            th:text="${scholarship.provider + ' / ' + scholarship.category}"
+          ></p>
+          <p
+            class="amount"
+            th:text="${scholarship.currency + ' ' + scholarship.amount}"
+          ></p>
+          <p th:text="${scholarship.description}"></p>
+          <dl>
+            <dt>Deadline</dt>
+            <dd th:text="${scholarship.deadline}"></dd>
+            <dt>Seats</dt>
+            <dd th:text="${scholarship.seats}"></dd>
+            <dt>Status</dt>
+            <dd th:text="${scholarship.status}"></dd>
+          </dl>
+          <h3>Eligibility criteria</h3>
+          <dl>
+            <dt>Minimum CGPA</dt>
+            <dd th:text="${scholarship.criteria.minCgpa + ' / 10'}"></dd>
+            <dt>Minimum attendance</dt>
+            <dd th:text="${scholarship.criteria.minAttendance + '%'}"></dd>
+            <dt>Annual income cap (USD)</dt>
+            <dd
+              th:text="${scholarship.criteria.maxIncome == null ? 'No cap' : scholarship.criteria.maxIncome}"
+            ></dd>
+            <dt>Research publication</dt>
+            <dd
+              th:text="${scholarship.criteria.requiresResearch ? 'Required' : 'Not required'}"
+            ></dd>
+            <dt>Leadership experience</dt>
+            <dd
+              th:text="${scholarship.criteria.requiresLeadership ? 'Required' : 'Not required'}"
+            ></dd>
+            <dt>Competitive sports</dt>
+            <dd
+              th:text="${scholarship.criteria.sportsRequired ? 'Required' : 'Not required'}"
+            ></dd>
+            <dt>Eligible locations</dt>
+            <dd
+              th:text="${scholarship.criteria.locations.isEmpty() ? 'Any location' : #strings.listJoin(scholarship.criteria.locations, ', ')}"
+            ></dd>
+            <dt>Fields of study</dt>
+            <dd
+              th:text="${scholarship.criteria.fields.isEmpty() ? 'Any field' : #strings.listJoin(scholarship.criteria.fields, ', ')}"
+            ></dd>
+            <dt th:if="${scholarship.criteria.womenOnly}">
+              Targeted eligibility
+            </dt>
+            <dd th:if="${scholarship.criteria.womenOnly}">Women applicants</dd>
+            <dt th:if="${scholarship.criteria.minorityOnly}">
+              Targeted eligibility
+            </dt>
+            <dd th:if="${scholarship.criteria.minorityOnly}">
+              Minority-community applicants
+            </dd>
+            <dt th:if="${scholarship.criteria.disabilityPreferred}">
+              Inclusion preference
+            </dt>
+            <dd th:if="${scholarship.criteria.disabilityPreferred}">
+              Applicants with a disability
+            </dd>
+          </dl>
+        </section>
+        <section class="panel">
+          <th:block th:if="${match != null}"
+            ><p class="eyebrow">YOUR MATCH</p>
+            <p class="score" th:text="${match.matchScore + '%'}"></p>
+            <h2
+              th:text="${match.eligible ? 'You meet the criteria.' : 'A few things to work on.'}"
+            ></h2>
+            <ul>
+              <li th:each="reason : ${match.reasons}" th:text="${reason}"></li>
+              <li
+                th:each="reason : ${match.missingCriteria}"
+                th:text="${reason}"
+              ></li>
+            </ul>
+            <p
+              th:text="${'Heuristic win estimate: ' + match.winProbability + '%'}"
+            ></p>
+            <p class="small" th:text="${match.fairnessNote}"></p>
+            <p class="small" id="application-sharing-notice">
+              Submitting shares your current supporting documents with the
+              institution reviewing this application.
+            </p>
+            <div class="actions">
+              <form
+                th:action="@{/scholarships/{id}/apply(id=${scholarship.id})}"
+                aria-describedby="application-sharing-notice"
+                method="post"
+              >
+                <button th:disabled="${!match.eligible}">
+                  Submit application ↗
+                </button>
+              </form>
+              <form
+                th:action="@{/scholarships/{id}/save(id=${scholarship.id})}"
+                method="post"
+              >
+                <button class="secondary">Toggle saved</button>
+              </form>
+            </div>
+            <p class="small">
+              Closed programs, expired deadlines, incomplete profiles, and
+              duplicate submissions are blocked by the server.
+            </p></th:block
+          ><th:block th:if="${match == null}"
+            ><h2>Your story belongs here.</h2>
+            <p>
+              Sign in as a student and complete your profile to get an
+              explainable match.
+            </p>
+            <a class="button" href="/login">Sign in ↗</a></th:block
+          >
+        </section>
+      </div>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

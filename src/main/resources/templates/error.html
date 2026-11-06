@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <section class="panel">
+        <p class="eyebrow">REQUEST COULD NOT BE COMPLETED</p>
+        <h2 th:text="${errorTitle ?: 'Something went wrong.'}"></h2>
+        <p
+          th:text="${detail ?: 'The page may be unavailable, or you may not have permission. Please try again or contact your administrator.'}"
+        ></p>
+        <div class="actions">
+          <a class="button" href="/dashboard">Back to workspace ↗</a
+          ><a class="button secondary" href="/">Home</a>
+        </div>
+      </section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

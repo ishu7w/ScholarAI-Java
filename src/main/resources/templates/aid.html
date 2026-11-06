@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <div class="grid two">
+        <section>
+          <form
+            th:action="@{/financial-aid}"
+            method="post"
+            class="panel"
+            id="aid-form"
+          >
+            <p class="eyebrow">YOUR STUDY BUDGET</p>
+            <h2>Where does the funding gap stand?</h2>
+            <p>
+              Use one currency and one academic year for every amount. This is a
+              planning estimate, not an eligibility decision. Amounts are not
+              converted.
+            </p>
+            <div class="grid two">
+              <label
+                >Currency<select name="currency" id="currency">
+                  <option
+                    th:each="c : ${ {'USD','INR','GBP','EUR','CAD','AUD'} }"
+                    th:value="${c}"
+                    th:text="${c}"
+                    th:selected="${plan.currency == c}"
+                  ></option></select></label
+              ><label
+                >Estimated yearly cost<input
+                  type="number"
+                  name="cost"
+                  min="0"
+                  max="1000000000"
+                  step="0.01"
+                  required
+                  th:value="${plan.cost}" /></label
+              ><label
+                >Confirmed aid<input
+                  type="number"
+                  name="confirmed"
+                  min="0"
+                  max="1000000000"
+                  step="0.01"
+                  required
+                  th:value="${plan.confirmed}" /></label
+              ><label
+                >Your contribution<input
+                  type="number"
+                  name="contribution"
+                  min="0"
+                  max="1000000000"
+                  step="0.01"
+                  required
+                  th:value="${plan.contribution}"
+              /></label>
+            </div>
+            <p class="eyebrow">ESTIMATED FUNDING GAP</p>
+            <output
+              id="gap"
+              class="amount"
+              th:text="${plan.currency + ' ' + #numbers.formatDecimal(gap,1,'COMMA',2,'POINT')}"
+            ></output>
+            <h3>Your financial aid checklist</h3>
+            <label class="checkbox" th:each="t : ${checklist}"
+              ><input
+                type="checkbox"
+                name="checked"
+                th:value="${t.id}"
+                th:checked="${plan.checked.contains(t.id)}" /><span
+                th:text="${t.label}"
+              ></span></label
+            ><button>Save plan & checklist ↗</button>
+            <p class="small">
+              Your plan is saved to your account across devices.
+            </p>
+          </form>
+        </section>
+        <section>
+          <p class="eyebrow">OFFICIAL FUNDING DIRECTORY</p>
+          <h2>Find your next opening.</h2>
+          <label
+            >Filter opportunities<input
+              data-filter="funding"
+              placeholder="Search provider, country, or study level"
+          /></label>
+          <p class="small">
+            Imported from the merged branch, last checked there on 2 November
+            2026. Dates and terms can change; confirm every detail with the
+            official provider.
+          </p>
+          <div id="funding">
+            <article class="panel filter-item" th:each="f : ${funding}">
+              <p
+                class="eyebrow"
+                th:text="${f.destination + ' / ' + f.type}"
+              ></p>
+              <h3 th:text="${f.name}"></h3>
+              <p th:text="${f.coverage}"></p>
+              <details>
+                <summary>Eligibility & application</summary>
+                <p th:text="${f.eligibility}"></p>
+                <p th:text="${f.application}"></p>
+                <p th:text="${f['deadlineInfo']}"></p>
+              </details>
+              <a
+                th:href="${f.officialUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Official provider ↗</a
+              >
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

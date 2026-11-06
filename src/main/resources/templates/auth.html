@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <main id="main-content" tabindex="-1" class="auth-layout">
+      <section>
+        <p class="eyebrow">YOUR NEXT CHAPTER / SCHOLARAI</p>
+        <h1>
+          Potential,<br />meet<br /><span class="outline">opportunity.</span>
+        </h1>
+        <p>
+          Scholarships explained. Applications connected.<br />Your future, in
+          focus.
+        </p>
+      </section>
+      <section class="panel">
+        <h2
+          th:text="${mode == 'login' ? 'Welcome back.' : mode == 'register' ? 'Create your account.' : mode == 'forgot-password' ? 'Recover your account.' : 'Choose a new password.'}"
+        ></h2>
+        <p class="notice" th:if="${param.error}" role="alert">
+          Email or password was incorrect, or the account is disabled.
+        </p>
+        <p class="notice" th:if="${param.registered}" role="status">
+          Your account is ready. Sign in to continue. Institutions require
+          administrator approval before publishing.
+        </p>
+        <p class="notice" th:if="${param.logout}" role="status">
+          You have signed out.
+        </p>
+        <p class="notice" th:if="${param.reset}" role="status">
+          Password updated. Sign in with your new password.
+        </p>
+        <p class="notice" th:if="${param.sent}" role="status">
+          If an eligible account exists, recovery instructions will be sent. If
+          no email arrives, contact your administrator.
+        </p>
+        <form th:action="@{/{mode}(mode=${mode})}" method="post">
+          <label th:if="${mode == 'register'}"
+            >Your name<input
+              name="name"
+              required
+              minlength="2"
+              maxlength="120"
+              autocomplete="name" /></label
+          ><label th:if="${mode != 'reset-password'}"
+            >Email address<input
+              type="email"
+              name="email"
+              required
+              maxlength="254"
+              autocomplete="username" /></label
+          ><label th:if="${mode != 'forgot-password'}"
+            >Password<span
+              th:if="${mode != 'login'}"
+              class="small password-help"
+              >Use at least 12 characters and no more than 72 UTF-8 bytes.</span
+            ><input
+              type="password"
+              name="password"
+              required
+              th:minlength="${mode == 'login' ? 1 : 12}"
+              maxlength="72"
+              th:autocomplete="${mode == 'login' ? 'current-password' : 'new-password'}" /></label
+          ><label th:if="${mode == 'register'}"
+            >I am a<select name="role">
+              <option value="student">Student</option>
+              <option value="institution">
+                Institution (approval required)
+              </option>
+            </select></label
+          ><input
+            th:if="${mode == 'reset-password'}"
+            type="hidden"
+            name="token"
+            th:value="${param.token}"
+          /><button
+            th:text="${mode == 'login' ? 'Sign in ↗' : mode == 'register' ? 'Create account ↗' : mode == 'forgot-password' ? 'Send recovery instructions ↗' : 'Update password ↗'}"
+          ></button>
+        </form>
+        <div class="auth-links">
+          <a href="/login">Sign in</a><a href="/register">Create account</a
+          ><a href="/forgot-password">Forgot password?</a>
+        </div>
+      </section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <p class="notice" th:if="${profile.isEmpty()}">
+        Start by completing your academic profile. No demo identity or
+        achievements have been assigned to your account.
+      </p>
+      <div class="grid three">
+        <section class="panel">
+          <p class="eyebrow">EXPLAINABLE PROFILE SCORE</p>
+          <p class="score" th:text="${score + '/100'}"></p>
+          <a href="/dashboard/student/profile">Update profile ↗</a>
+        </section>
+        <section class="panel">
+          <p class="eyebrow">APPLICATIONS</p>
+          <p class="score" th:text="${applications.size()}"></p>
+          <a href="/scholarships">Find opportunities ↗</a>
+        </section>
+        <section class="panel">
+          <p class="eyebrow">YOUR NEXT STEP</p>
+          <h2>Make your potential visible.</h2>
+          <a href="/resume-analyzer">Analyze your resume ↗</a>
+        </section>
+      </div>
+      <section class="section">
+        <h2>The score, explained.</h2>
+        <p>
+          Self-reported profile data is unverified. SOP, recommendation and
+          conduct signals remain zero until independently assessed.
+        </p>
+        <div class="grid two">
+          <div class="row" th:each="c : ${components}">
+            <div>
+              <span
+                th:text="${c.label + ' · ' + #numbers.formatDecimal(c.weight * 100,1,0) + '% weight'}"
+              ></span>
+              <p
+                class="small"
+                th:if="${c['detail'] != null}"
+                th:text="${c.detail}"
+              ></p>
+            </div>
+            <strong th:text="${c.weighted}"></strong>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2>Scholarships in focus.</h2>
+        <div class="grid two">
+          <article class="panel" th:each="m : ${matches}">
+            <p
+              class="eyebrow"
+              th:text="${m.matchScore + '% match / ' + (m.eligible ? 'Eligible' : 'Check criteria')}"
+            ></p>
+            <h3 th:text="${m.scholarship.name}"></h3>
+            <a th:href="@{/scholarships/{id}(id=${m.scholarship.id})}"
+              >See why you match ↗</a
+            >
+          </article>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Your applications</h2>
+        <p th:if="${applications.isEmpty()}">
+          You have not applied yet. Your submissions will appear here.
+        </p>
+        <div class="row" th:each="a : ${applications}">
+          <div>
+            <a
+              th:href="@{/scholarships/{id}(id=${a.scholarship_id})}"
+              th:text="${a.scholarship.name}"
+            ></a>
+            <p class="small" th:text="${a.reason}"></p>
+          </div>
+          <strong th:text="${a.status}"></strong
+          ><span th:text="${'Frozen score ' + a.ai.score}"></span>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Your improvement roadmap</h2>
+        <ol>
+          <li th:each="item : ${roadmap}" th:text="${item}"></li>
+        </ol>
+      </section>
+      <section th:replace="~{layout :: notifications}"></section>
+      <section th:replace="~{layout :: copilot}"></section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

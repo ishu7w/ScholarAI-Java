@@ -1,0 +1,17 @@
+CREATE TABLE users (id VARCHAR(36) PRIMARY KEY, email VARCHAR(254) NOT NULL UNIQUE, name VARCHAR(120) NOT NULL, password VARCHAR(100) NOT NULL, role VARCHAR(20) NOT NULL CHECK (role IN ('student','institution','admin')), approved BOOLEAN NOT NULL DEFAULT FALSE, disabled BOOLEAN NOT NULL DEFAULT FALSE, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE student_profiles (user_id VARCHAR(36) PRIMARY KEY REFERENCES users(id), payload TEXT NOT NULL);
+CREATE TABLE scholarships (id VARCHAR(100) PRIMARY KEY, owner_id VARCHAR(36) REFERENCES users(id), status VARCHAR(20) NOT NULL DEFAULT 'active', payload TEXT NOT NULL);
+CREATE INDEX scholarships_owner_idx ON scholarships(owner_id);
+CREATE TABLE applications (id VARCHAR(36) PRIMARY KEY, student_id VARCHAR(36) NOT NULL REFERENCES users(id), scholarship_id VARCHAR(100) NOT NULL REFERENCES scholarships(id), status VARCHAR(20) NOT NULL DEFAULT 'submitted', snapshot TEXT NOT NULL, reason VARCHAR(2000) NOT NULL DEFAULT '', submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, decided_at TIMESTAMP, UNIQUE(student_id, scholarship_id));
+CREATE INDEX applications_scholarship_idx ON applications(scholarship_id);
+CREATE TABLE saved_scholarships (student_id VARCHAR(36) NOT NULL REFERENCES users(id), scholarship_id VARCHAR(100) NOT NULL REFERENCES scholarships(id), PRIMARY KEY(student_id, scholarship_id));
+CREATE TABLE documents (id VARCHAR(36) PRIMARY KEY, owner_id VARCHAR(36) NOT NULL REFERENCES users(id), name VARCHAR(200) NOT NULL, media_type VARCHAR(80) NOT NULL, size_bytes BIGINT NOT NULL, kind VARCHAR(30) NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'pending', created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX documents_owner_idx ON documents(owner_id);
+CREATE TABLE notifications (id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36) NOT NULL REFERENCES users(id), message VARCHAR(2000) NOT NULL, is_read BOOLEAN NOT NULL DEFAULT FALSE, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX notifications_user_idx ON notifications(user_id);
+CREATE TABLE audit_log (id VARCHAR(36) PRIMARY KEY, actor_id VARCHAR(36) REFERENCES users(id), action VARCHAR(120) NOT NULL, entity_id VARCHAR(100) NOT NULL, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX audit_actor_idx ON audit_log(actor_id);
+CREATE TABLE password_resets (token_hash VARCHAR(64) PRIMARY KEY, user_id VARCHAR(36) NOT NULL REFERENCES users(id), expires_at TIMESTAMP NOT NULL);
+CREATE INDEX resets_user_idx ON password_resets(user_id);
+CREATE TABLE aid_plans (user_id VARCHAR(36) PRIMARY KEY REFERENCES users(id), payload TEXT NOT NULL);
+CREATE TABLE rate_limits (bucket VARCHAR(80) PRIMARY KEY, attempts INTEGER NOT NULL, expires_at TIMESTAMP NOT NULL);

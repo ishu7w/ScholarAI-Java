@@ -1,0 +1,30 @@
+[
+  {
+    "id": "aid-school",
+    "label": "Ask each college about institutional grants and payment plans"
+  },
+  {
+    "id": "aid-government",
+    "label": "Check government aid eligibility in your country of residence"
+  },
+  {
+    "id": "aid-income",
+    "label": "Gather recent household income and tax documents"
+  },
+  {
+    "id": "aid-transcript",
+    "label": "Request official transcripts and enrollment records"
+  },
+  {
+    "id": "aid-references",
+    "label": "Ask recommenders early and share your deadlines"
+  },
+  {
+    "id": "aid-essays",
+    "label": "Draft a financial-need statement and review each prompt"
+  },
+  {
+    "id": "aid-verify",
+    "label": "Verify deadlines and required documents on the provider's official site"
+  }
+]

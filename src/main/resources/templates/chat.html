@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <section class="panel">
+        <p class="eyebrow">YOUR QUESTION</p>
+        <h2 th:text="${question}"></h2>
+        <p th:text="${answer}"></p>
+        <p class="small">
+          This assistant uses the fixed matching model and platform
+          instructions. It does not provide provider-specific guarantees.
+        </p>
+      </section>
+      <section th:replace="~{layout :: copilot}"></section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>

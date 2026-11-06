@@ -1,0 +1,1 @@
+ALTER TABLE documents ADD COLUMN checks TEXT NOT NULL DEFAULT '{}';

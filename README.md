@@ -1,128 +1,62 @@
-# ScholarAI — Explainable Scholarship Matching
+# ScholarAI — simple Java edition
 
-ScholarAI matches students to scholarships with a scoring model you can read. Every number the UI shows — a profile score, a match percentage, a rejection reason — traces back to a published weight in `src/lib/ai-engine.ts`, so a student can see exactly why they placed where they did and an institution gets a ranking it can defend.
+ScholarAI helps students understand scholarship eligibility, improve their profiles and track applications. Institutions publish programs and review a queue ranked by an explainable model. Administrators approve institutions, manage users and inspect the audit trail.
 
-Three roles share one platform:
+This repository is the Java migration of [ishu7w/ScholarAI](https://github.com/ishu7w/ScholarAI). The `add-financial-aid-planner` branch was merged before migration; the complete merged original remains in Git history at `b05c58b`. The original repository was not modified.
 
-- **Students** complete an academic profile, browse a ranked catalogue with per-program eligibility explanations, upload supporting documents for automated verification, apply, and get notified when a decision lands.
-- **Institutions** publish scholarship programs with machine-enforced eligibility criteria, work an AI-ranked applicant queue with fraud signals, and approve or reject with the engine's own reasons attached.
-- **Admins** see platform aggregates, the live scoring-weight registry, a filterable audit log, and user role/disable controls.
+## Run locally
 
-## Two modes
+Install JDK 21+ and Maven 3.9+, then:
 
-The app runs in one of two modes, chosen at runtime by which environment variables are present. There is no build flag and no code change between them.
-
-| | Demo mode | Live mode |
-|---|---|---|
-| **Trigger** | no env vars set | `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` set (auth), `DATABASE_URL` set (data) |
-| **Data** | deterministic seed data from `src/lib/data.ts`, in module memory | Postgres via Drizzle |
-| **Auth** | explicit student, institution, and admin demo entries; arbitrary credentials are rejected | real Supabase Auth, three roles, RLS-enforced |
-| **Writes** | applications persist in memory for the session; institution/admin writes no-op | persisted, audit-logged |
-| **Uploads** | unavailable (no storage backend) | private Supabase Storage bucket + verification pipeline |
-| **Realtime** | no socket; the notification bell polls | Postgres CDC on `notifications` and `applications` |
-
-The switch lives in `src/lib/env.ts` (`isLiveMode()`, `hasDatabase()`) and is honoured by `getDataSource()` in `src/lib/datasource/index.ts`, which returns either `DemoDataSource` or `LiveDataSource` behind one interface. Delete or comment out your `.env.local` and you are back in demo mode.
-
-Demo mode exists so the product can be judged or demonstrated on any machine with zero setup, keys, or network. It is not a security posture — see `SECURITY.md`.
-
-### Quickstart — demo mode
-
-```bash
-npm install
-npm run dev
+```sh
+mvn spring-boot:run
 ```
 
-Open http://localhost:3000. No env file, no database, no API keys.
+Open [localhost:8080](http://localhost:8080). A disk-backed local database and private document directory are created under `data/`. Create your own student or institution account. There are no default passwords or automatic demo sessions. Institution publishing requires administrator approval.
 
-The login page offers separate **Student demo**, **Institution demo**, and **Admin demo** entries when live services are not configured. These open sample dashboards without accepting or pretending to authenticate email/password credentials. When Supabase and Postgres are configured, the demo entries disappear; seeded demo accounts and real accounts both authenticate through Supabase and open the role stored in their database profile.
+To create the first administrator, supply `ADMIN_EMAIL` and a strong `ADMIN_PASSWORD` through your shell's secret mechanism before starting the app. The password must contain at least 12 characters and no more than 72 UTF-8 bytes. Bootstrap creates an account only if the email does not already exist; it never promotes an existing account. Remove the bootstrap password from the environment afterward.
 
-### Quickstart — live mode
-
-```bash
-npm install
-cp .env.example .env.local     # then fill in your Supabase values
-npm run db:generate            # only if you changed src/lib/db/schema.ts
-npm run db:migrate             # apply drizzle/ migrations
-psql "$DATABASE_URL" -f supabase/rls.sql        # row level security
-psql "$DATABASE_URL" -f supabase/realtime.sql   # optional: live updates
-npm run db:seed                # 12 scholarships + 3 demo accounts
-npm run verify:deploy          # confirm the target is actually ready
-npm run dev
+```sh
+mvn verify
+mvn package
+java -jar target/scholarai-1.0.0.jar
 ```
 
-`DEPLOYMENT.md` has the full walkthrough, including the Vercel steps and the problems worth knowing about before you hit them.
+The Java application needs no Node, React, Supabase or frontend build. Java renders HTML through Thymeleaf. Small browser scripts provide mobile menus, the copilot, filtering and the live funding calculation.
 
-### Demo accounts (live mode, created by `npm run db:seed`)
+## Features
 
-| Email | Role |
-|---|---|
-| `student@demo.scholarai.app` | student |
-| `institution@demo.scholarai.app` | institution |
-| `admin@demo.scholarai.app` | admin |
+- Persistent registration, credential login/logout, expiring one-use recovery links sent over SMTP, BCrypt hashing, session expiry, CSRF and role protection.
+- Student profiles; ten original scoring weights; ranked matches with eligibility explanations; saved scholarships; applications with immutable scoring snapshots; decisions and notifications.
+- Institution approval, program creation/editing/closure, tenant-isolated applicant ranking and reasoned decisions.
+- Private PDF/PNG/JPEG uploads with size/signature limits, readable-PDF text consistency checks, pending scan handling, owner-controlled deletion and downloads restricted to owners and reviewing institutions after application submission.
+- Resume text/PDF analysis, deterministic account-grounded copilot, financial-aid calculation, account-persisted checklist and original funding directory.
+- Administrator user approval, enable/disable and role changes; published weight registry, evidence-recorded assessment of SOP/recommendation/conduct signals, and audit filters.
+- Original landing markup, fonts, paper/vermilion design and route families; Java workspace templates preserve the same visual system and navigation pattern.
 
-Password for all three: `scholarai-demo`
+The bundled scholarship catalogue and landing marketing figures/testimonials originate from the original demonstration. They are not independently validated awards or deployment statistics. Reference scholarship dates are preserved and expired awards cannot accept submissions. Live institutions publish their own real programs. External funding calls must be confirmed on provider websites.
 
-Seeding these accounts requires `SUPABASE_SERVICE_ROLE_KEY`; without it the script seeds scholarships only and says so. Change or delete these accounts before exposing a deployment publicly.
+## Simple code map
 
-## The scoring model
+| File | Responsibility |
+| --- | --- |
+| `WebController.java` | Routes, form inputs, page models and redirects |
+| `Accounts.java` | Registration, passwords, throttles and recovery |
+| `SecurityConfig.java` | Authentication, CSRF, roles, session revocation and security headers |
+| `Scholarships.java` | Profiles, programs, saved items, submissions and decisions |
+| `Matching.java` | Original scoring, eligibility, rankings, review signals and resume heuristics |
+| `Documents.java` / `DocumentChecks.java` | Private storage and PDF consistency checks |
+| `Administration.java` / `FinancialAid.java` | Account management, reviewed signals and financial planning |
+| `Copilot.java` | Answers grounded in the signed-in account |
+| `Store.java` | JDBC and JSON persistence helpers |
+| `Bootstrap.java` | Reference data and optional administrator initialization |
+| `src/main/resources/templates/` | Server-rendered pages |
+| `src/main/resources/db/migration/` | Versioned database schema |
 
-Ten weighted signals, defined in the `WEIGHTS` array in `src/lib/ai-engine.ts`. The admin dashboard imports that same array rather than restating it, so the registry cannot drift from the engine.
+OOP comments identify actual encapsulation, composition, interface implementation, inheritance and method overriding. See [docs/OOP_GUIDE.md](docs/OOP_GUIDE.md) for a short reading guide.
 
-| Signal | Weight | Input |
-|---|---|---|
-| Academic Performance | 22% | CGPA (80%) + attendance (20%) |
-| Financial Need | 18% | family income on a log-need curve |
-| Achievements | 12% | awards, hackathons, sports level |
-| Research Output | 10% | peer-reviewed publications |
-| Leadership | 8% | verified leadership roles |
-| Projects & Skills | 8% | projects, certifications, skill count |
-| Statement of Purpose | 8% | SOP quality score |
-| Community Service | 7% | volunteer hours |
-| Recommendations | 4% | aggregate recommender strength |
-| Behaviour & Integrity | 3% | institution conduct score |
+## Production operation
 
-Weights sum to 1.00. On top of the base score the engine applies hard eligibility gates (CGPA floor, income cap, attendance, research/leadership/sports requirements, location and field restrictions), a category affinity adjustment, and a win-probability estimate that factors in applicants-per-seat.
+Use PostgreSQL, an SMTP provider, HTTPS, a durable private storage volume and managed backups. The `prod` profile rejects missing infrastructure settings, development databases and non-HTTPS origins. Secure cookies require HTTPS. `.env` files are consumed by Docker Compose; Java does not automatically load them.
 
-Gender, minority status and disability are used **only** where a scholarship explicitly targets or prefers those groups — never as a penalty. Every match result carries a `fairnessNote` stating this.
-
-Scores are frozen. When a student submits, the engine's verdict is written into `applications.ai_snapshot` and institutions rank on that snapshot, so a later profile edit cannot retroactively change the basis for a decision.
-
-## Stack
-
-Next.js 16 (App Router, Server Components, server actions) · React 19 · TypeScript · Tailwind CSS v4 · Supabase (Auth, Postgres, Storage, Realtime) · Drizzle ORM + drizzle-kit · Zod · GSAP + Lenis + Framer Motion · Recharts · Lucide · Vitest · optional Anthropic SDK for the copilot
-
-## npm scripts
-
-| Script | What it does |
-|---|---|
-| `npm run dev` | dev server |
-| `npm run build` | production build |
-| `npm start` | serve the production build |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | Vitest, single run |
-| `npm run test:watch` | Vitest in watch mode |
-| `npm run test:coverage` | Vitest with v8 coverage |
-| `npm run db:generate` | generate a migration from `src/lib/db/schema.ts` |
-| `npm run db:migrate` | apply migrations in `drizzle/` |
-| `npm run db:seed` | seed 12 scholarships and the 3 demo accounts |
-| `npm run verify:deploy` | pass/fail readiness check against a live target |
-
-Tests are pure-logic suites under `src/**/__tests__/` — no DOM, no network, no database (`vitest.config.ts`).
-
-## Environment variables
-
-See `.env.example` for the full contract. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` reach the browser by design; `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL` and `ANTHROPIC_API_KEY` are server-only and must never be given a `NEXT_PUBLIC_` prefix.
-
-Without `ANTHROPIC_API_KEY` the copilot and resume suggestions fall back to the deterministic engine — a supported configuration, not a degraded one.
-
-## Accessibility
-
-`prefers-reduced-motion` is respected across the loader, smooth scroll, tilt and cursor effects. Controls are keyboard-navigable and labelled, with ARIA on gauges and dialogs. Animations stay on transform and opacity. Full WCAG conformance would need manual testing with assistive technology and an expert review, which has not been done.
-
-## Further reading
-
-- [`DEPLOYMENT.md`](./DEPLOYMENT.md) — Vercel + Supabase step by step, and the real problems hit while building this
-- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the DataSource seam, the auth layers, and a traced request lifecycle
-- [`SECURITY.md`](./SECURITY.md) — threat model, enforcement layers, and honest limitations
-- [`supabase/rls-test.sql`](./supabase/rls-test.sql) — runnable proof that the RLS boundaries hold
+See [DEPLOYMENT.md](DEPLOYMENT.md), [SECURITY.md](SECURITY.md), [ARCHITECTURE.md](ARCHITECTURE.md) and the [migration plan](docs/JAVA_MIGRATION_PLAN.md). Deployment infrastructure and credentials must be configured before a real release. This is a single-instance application; clustered sessions, object storage, OCR and calibrated ML selection predictions are outside the current implementation.

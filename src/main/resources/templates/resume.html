@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{layout :: head}"></head>
+  <body>
+    <header th:replace="~{layout :: header}"></header>
+    <aside th:replace="~{layout :: sidebar}"></aside>
+    <main id="main-content" tabindex="-1" class="container">
+      <div th:replace="~{layout :: heading}"></div>
+      <p>
+        Paste the text of your resume to inspect its structure, skill keywords,
+        and impact statements. Analysis is deterministic guidance; it does not
+        certify suitability or predict selection.
+      </p>
+      <form
+        th:action="@{/resume-analyzer/upload}"
+        method="post"
+        enctype="multipart/form-data"
+        class="panel"
+      >
+        <label
+          >Or upload a text-based PDF (up to 5 MB)<input
+            type="file"
+            name="file"
+            accept="application/pdf"
+            required /></label
+        ><button>Analyze PDF ↗</button>
+      </form>
+      <form th:action="@{/resume-analyzer}" method="post" class="panel">
+        <label
+          >Resume text<textarea
+            name="text"
+            required
+            minlength="30"
+            maxlength="50000"
+            rows="14"
+            th:text="${text}"
+          ></textarea></label
+        ><button>Analyze resume ↗</button>
+      </form>
+      <section th:if="${analysis != null}" class="section">
+        <div class="grid two">
+          <article class="panel">
+            <p class="eyebrow">STRUCTURE / ATS HEURISTIC</p>
+            <p class="score" th:text="${analysis.atsScore + '/100'}"></p>
+          </article>
+          <article class="panel">
+            <p class="eyebrow">RESUME HEURISTIC</p>
+            <p class="score" th:text="${analysis.resumeScore + '/100'}"></p>
+          </article>
+        </div>
+        <h2>Make your next version stronger.</h2>
+        <ul>
+          <li th:each="s : ${analysis.suggestions}" th:text="${s}"></li>
+        </ul>
+        <div class="grid two">
+          <article class="panel" th:each="section : ${analysis.extracted}">
+            <h3 th:text="${section.key}"></h3>
+            <ul>
+              <li th:each="item : ${section.value}" th:text="${item}"></li>
+            </ul>
+            <p th:if="${section.value.isEmpty()}">No matching lines found.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+  </body>
+</html>
