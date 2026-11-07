@@ -1,15 +1,16 @@
 <!doctype html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head th:fragment="head">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
     <meta
-      name="description"
       content="Explainable scholarship matching for students and institutions."
+      name="description"
     />
     <title th:text="${title + ' · ScholarAI'}">ScholarAI</title>
-    <link rel="stylesheet" href="/styles.css" />
-    <script src="/app.js" defer></script>
+    <link href="/styles.css" rel="stylesheet" />
+    <script defer="" src="/app.js"></script>
   </head>
   <body>
     <header th:fragment="header">
@@ -21,27 +22,27 @@
         <a href="/scholarships">Scholarships</a
         ><a href="/financial-aid">Financial aid</a
         ><a href="/resume-analyzer">Resume analyzer</a
-        ><a th:if="${user != null}" href="/dashboard">Workspace ↗</a
-        ><a th:if="${user == null}" href="/login">Sign in ↗</a>
-        <form th:if="${user != null}" th:action="@{/logout}" method="post">
+        ><a href="/dashboard" th:if="${user != null}">Workspace ↗</a
+        ><a href="/login" th:if="${user == null}">Sign in ↗</a>
+        <form method="post" th:action="@{/logout}" th:if="${user != null}">
           <button class="text-button">Sign out</button>
         </form>
       </nav>
     </header>
     <aside
-      th:fragment="sidebar"
-      th:if="${user != null}"
       class="workspace-nav"
       id="workspace-navigation"
+      th:fragment="sidebar"
+      th:if="${user != null}"
     >
       <a class="wordmark sidebar-wordmark" href="/"
         ><span aria-hidden="true">▣</span> Scholar<span>AI</span></a
       >
       <button
+        aria-controls="workspace-links"
+        aria-expanded="false"
         class="secondary mobile-navigation"
         type="button"
-        aria-expanded="false"
-        aria-controls="workspace-links"
       >
         Workspace menu ☰
       </button>
@@ -71,11 +72,11 @@
           ><span aria-hidden="true">⌕</span> Resume analyzer</a
         >
         <a
-          th:if="${user.role == 'institution'}"
           href="/dashboard/institution/scholarships"
+          th:if="${user.role == 'institution'}"
           ><span aria-hidden="true">▣</span> My programs</a
         >
-        <a th:if="${user.role == 'admin'}" href="/dashboard/admin/users"
+        <a href="/dashboard/admin/users" th:if="${user.role == 'admin'}"
           ><span aria-hidden="true">▣</span> Users &amp; audit</a
         >
       </nav>
@@ -83,18 +84,18 @@
         <strong th:text="${user.name}"></strong
         ><span th:text="${user.email}"></span
         ><span class="eyebrow" th:text="${user.role}"></span>
-        <form th:action="@{/logout}" method="post">
+        <form method="post" th:action="@{/logout}">
           <button class="secondary">Sign out ↗</button>
         </form>
       </div>
     </aside>
-    <div th:fragment="heading" class="page-heading">
+    <div class="page-heading" th:fragment="heading">
       <p class="eyebrow">SCHOLARAI / EXPLAINABLE OPPORTUNITIES</p>
       <h1 th:text="${title}">ScholarAI</h1>
       <p
-        th:if="${message}"
         class="notice"
         role="status"
+        th:if="${message}"
         th:text="${message}"
       ></p>
     </div>
@@ -103,35 +104,85 @@
       <p>Transparent weights. Real opportunities. Your next chapter.</p>
     </footer>
     <section
-      th:fragment="notifications"
-      th:if="${notifications != null && !notifications.isEmpty()}"
       class="panel"
+      th:fragment="notifications"
+      th:if="${notifications != null &amp;&amp; !notifications.isEmpty()}"
     >
       <h2>Notifications</h2>
-      <div th:each="n : ${notifications}" class="row">
+      <div class="row" th:each="n : ${notifications}">
         <p th:text="${n.message}"></p>
         <form
-          th:if="${!n.is_read}"
-          th:action="@{/notifications/{id}/read(id=${n.id})}"
           method="post"
+          th:action="@{/notifications/{id}/read(id=${n.id})}"
+          th:if="${!n.is_read}"
         >
           <button class="secondary">Mark read</button>
         </form>
       </div>
     </section>
-    <section th:fragment="copilot" th:if="${user != null}" class="panel">
+    <section class="panel" th:fragment="copilot" th:if="${user != null}">
       <p class="eyebrow">DETERMINISTIC GUIDANCE</p>
       <h2>Ask your copilot.</h2>
-      <form th:action="@{/chat}" method="post" class="inline-form">
+      <form class="inline-form" method="post" th:action="@{/chat}">
         <label class="grow"
           >Your question<input
-            name="question"
-            required
-            minlength="2"
             maxlength="1000"
-            placeholder="How can I improve my score?" /></label
+            minlength="2"
+            name="question"
+            placeholder="How can I improve my score?"
+            required="" /></label
         ><button>Ask ScholarAI ↗</button>
       </form>
+    </section>
+    <section
+      class="panel source-status"
+      th:fragment="source-status"
+      th:if="${sourceStatuses != null}"
+    >
+      <details>
+        <summary>Provider refresh status</summary>
+        <p class="small">
+          These updates describe our last attempt to retrieve provider
+          information. The provider’s published terms determine eligibility and
+          whether applications are open.
+        </p>
+        <p class="small" th:if="${sourceStatuses.isEmpty()}">
+          No provider refresh has been recorded yet.
+        </p>
+        <article
+          class="source-status-item"
+          th:each="source : ${sourceStatuses}"
+        >
+          <h3 th:text="${source.name}"></h3>
+          <p class="small" th:if="${source['stale'] == true}">
+            Cached provider information may be out of date.
+          </p>
+          <p
+            class="small"
+            th:text="${source['status'] == 'success' ? 'Provider information updated' : (source['status'] == 'partial' ? 'Some provider information is unavailable' : (source['status'] == 'error' ? 'Provider refresh is currently unavailable' : 'Waiting for a provider refresh'))}"
+          ></p>
+          <p
+            class="small"
+            th:if="${source['lastFetchedAt'] != null}"
+            th:text="${'Last refresh attempt: ' + source.lastFetchedAt}"
+          ></p>
+          <p class="small" th:if="${source['lastFetchedAt'] == null}">
+            This provider has not been refreshed yet.
+          </p>
+          <p
+            class="small"
+            th:if="${source['count'] != null}"
+            th:text="${'Retrieved entries: ' + source.count}"
+          ></p>
+          <a
+            rel="noopener noreferrer"
+            target="_blank"
+            th:href="${source.sourceUrl}"
+            th:if="${source['sourceUrl'] != null}"
+            >Check the provider website ↗</a
+          >
+        </article>
+      </details>
     </section>
   </body>
 </html>

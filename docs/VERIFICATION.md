@@ -1,20 +1,23 @@
-# Verification evidence
+# Verification evidence for the live-source release
 
-## Local release checks
+## Clean application build
 
-- Java 21 `mvn -B verify`: **32 tests passed, zero failures/errors**. This compiles and packages the executable application.
-- Original-engine equivalence: **13 profiles and 156 scholarship matches** compare score totals, eligibility, match percentages and probability heuristics against outputs captured from the merged original TypeScript code. Resume score fixtures are also compared.
-- Integration coverage includes public/authenticated page rendering, valid/invalid login, CSRF and role boundaries, registration normalization, institution approval, frozen application snapshots, cross-institution decisions, saved funding plans, upload validation/ownership/sharing, expiring one-use recovery links and session revocation.
-- Security/service regressions cover concurrent first funding saves, preservation of reviewer-assessed profile fields, applicant-count preservation, integer seats, stale administrator privileges, bootstrap identity, file rollback/commit consistency, bounded PDF text extraction and role-specific copilot answers.
-- Packaged-JAR browser journey: **passed**, with **zero browser JavaScript errors**. Tested new student and institution accounts, administrator approval, profile editing, funding-plan persistence, resume analysis, a private upload, program publication, saved scholarships, eligible submission, institution approval and the resulting student decision/notification.
-- Browser layouts checked at **375, 768 and 1280px**, including authenticated dashboard/profile/catalogue/funding/resume pages. No root horizontal overflow was observed in those checks.
-- UI review separately passed **21 public-route/viewport checks** and **five axe WCAG A/AA scans** with zero reported violations. See UI_PARITY.md for precise scope and remaining parity boundaries.
-- `git diff --check` and staged-diff checks passed. Generated data, uploads, test credentials, dependencies and build directories are excluded from Git.
+Java 21 `mvn -B clean verify` passed **48 tests, zero failures/errors**. Clean packaging was checked to exclude the removed production scholarship/funding seeds and all test fixtures from the executable JAR.
 
-## Continuous integration
+Coverage includes account registration/login/logout, role/CSRF boundaries, normalized identities, institution ownership/approval, immutable local application snapshots, reviewer assessments, saved plans, private document contents and transactional rollback/deletion. Email recovery tests and routes were removed when the user explicitly removed that requirement.
 
-The [Java CI workflow](https://github.com/ishu7w/ScholarAI-Java/actions/workflows/ci.yml) runs Java 21 verification against H2 and PostgreSQL 17, then builds and smoke-tests the Docker image. Consult the run associated with the current commit for its actual result; this document does not substitute a configured workflow for an executed check.
+New checks prove that official Apply redirects point at the stored provider HTTPS URL without creating a fake submitted application, that unknown provider terms do not produce invented numbers, and that serialized authentication/expiry/logout persist across independent JDBC session repositories. Sync checks cover successful import, date expiry, unavailable/partial source preservation, retiring missing records only after complete refresh, URL validation, distributed lease coordination and cached refresh reuse after a cold start.
 
-## Checks requiring deployment configuration
+The original scoring model is still compared against **13 full profiles and 156 scholarship matches**, plus resume fixtures. Those files exist only under test resources; they do not seed the production application.
 
-Live SMTP delivery, public HTTPS and cookie behavior, durable storage, monitoring, backups and restore testing require a configured deployment. Local SMTP is mocked in recovery tests; browser accounts and data are synthetic. Docker was unavailable on the local machine, so image verification is assigned to CI. Automated accessibility testing is not full manual accessibility certification. External award deadlines and original demonstration marketing claims were not independently revalidated.
+## Actual provider-network evidence
+
+The current Java adapter completed a real fetch in **64.72 seconds** and returned **61 Bristol records**: **17 open, 1 upcoming**, 18 closed and 25 whose status was not sufficiently specified. Only open/upcoming, unexpired records are eligible for the public active catalogue. The upcoming Unite Foundation cycle publishes 1 January 2027 as its opening date and no exact deadline; that deadline stays unknown.
+
+Official provider-published application links are preserved exactly, including third-party form platforms linked from university pages. A form's year-like URL slug is not rewritten to a guessed year. Chevening timed out and Melbourne returned HTTP403 in this fetch; both are recorded as source failures rather than replaced by invented data. Cached real records are retained if a provider is temporarily unavailable.
+
+## Release gates
+
+The [Java CI workflow](https://github.com/ishu7w/ScholarAI-Java/actions/workflows/ci.yml) verifies H2, PostgreSQL and the Docker image. Consult the run for the release commit for its executed result. Public HTTPS deployment, authenticated browser flows and actual scheduled refresh configuration are checked against the new Vercel project before final handoff; deployment configuration alone is not proof of a live application.
+
+Previous migration/browser/axe results are historical evidence, not a fresh claim about this changed release. See UI_PARITY.md. No unlimited-capacity or outage-free guarantee is made for free external services. Current platform/provider limits and backup/restore operations remain operational considerations.

@@ -4,3 +4,6 @@
 data
 target
 *.log
+.vercel
+.idea
+.vscode

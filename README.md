@@ -12,7 +12,7 @@ Install JDK 21+ and Maven 3.9+, then:
 mvn spring-boot:run
 ```
 
-Open [localhost:8080](http://localhost:8080). A disk-backed local database and private document directory are created under `data/`. Create your own student or institution account. There are no default passwords or automatic demo sessions. Institution publishing requires administrator approval.
+Open [localhost:8080](http://localhost:8080). A disk-backed local database is created under `data/`; private documents are stored transactionally inside that database. Create your own student or institution account. There are no default passwords or automatic demo sessions. Institution publishing requires administrator approval.
 
 To create the first administrator, supply `ADMIN_EMAIL` and a strong `ADMIN_PASSWORD` through your shell's secret mechanism before starting the app. The password must contain at least 12 characters and no more than 72 UTF-8 bytes. Bootstrap creates an account only if the email does not already exist; it never promotes an existing account. Remove the bootstrap password from the environment afterward.
 
@@ -26,22 +26,24 @@ The Java application needs no Node, React, Supabase or frontend build. Java rend
 
 ## Features
 
-- Persistent registration, credential login/logout, expiring one-use recovery links sent over SMTP, BCrypt hashing, session expiry, CSRF and role protection.
+- Persistent registration, credential login/logout, BCrypt hashing, session expiry, CSRF and role protection.
 - Student profiles; ten original scoring weights; ranked matches with eligibility explanations; saved scholarships; applications with immutable scoring snapshots; decisions and notifications.
 - Institution approval, program creation/editing/closure, tenant-isolated applicant ranking and reasoned decisions.
 - Private PDF/PNG/JPEG uploads with size/signature limits, readable-PDF text consistency checks, pending scan handling, owner-controlled deletion and downloads restricted to owners and reviewing institutions after application submission.
-- Resume text/PDF analysis, deterministic account-grounded copilot, financial-aid calculation, account-persisted checklist and original funding directory.
+- Resume text/PDF analysis, deterministic account-grounded copilot, financial-aid calculation, account-persisted checklist and automatically refreshed official funding directory.
 - Administrator user approval, enable/disable and role changes; published weight registry, evidence-recorded assessment of SOP/recommendation/conduct signals, and audit filters.
 - Original landing markup, fonts, paper/vermilion design and route families; Java workspace templates preserve the same visual system and navigation pattern.
 
-The bundled scholarship catalogue and landing marketing figures/testimonials originate from the original demonstration. They are not independently validated awards or deployment statistics. Reference scholarship dates are preserved and expired awards cannot accept submissions. Live institutions publish their own real programs. External funding calls must be confirmed on provider websites.
+Scholarships are discovered and refreshed from official provider websites. Every imported record retains its source URL, provider application link, published status/dates and retrieval time. Unknown benefits or eligibility remain unknown; imported programs never receive fabricated match percentages, seats or selection predictions. “Apply now” opens the official provider site. Institution submissions are a separate optional workflow.
+
+Source changes and temporary network failures are visible on the catalogue. Previously fetched real listings remain cached; known deadlines still expire naturally. No bundled scholarship seed or invented marketing statistics are loaded. Historical demonstration rows are archived from the public catalogue by a migration. Test fixtures exist only in `src/test/resources`.
 
 ## Simple code map
 
 | File | Responsibility |
 | --- | --- |
 | `WebController.java` | Routes, form inputs, page models and redirects |
-| `Accounts.java` | Registration, passwords, throttles and recovery |
+| `Accounts.java` | Registration, passwords and throttles |
 | `SecurityConfig.java` | Authentication, CSRF, roles, session revocation and security headers |
 | `Scholarships.java` | Profiles, programs, saved items, submissions and decisions |
 | `Matching.java` | Original scoring, eligibility, rankings, review signals and resume heuristics |
@@ -49,14 +51,20 @@ The bundled scholarship catalogue and landing marketing figures/testimonials ori
 | `Administration.java` / `FinancialAid.java` | Account management, reviewed signals and financial planning |
 | `Copilot.java` | Answers grounded in the signed-in account |
 | `Store.java` | JDBC and JSON persistence helpers |
-| `Bootstrap.java` | Reference data and optional administrator initialization |
+| `OfficialScholarshipSources.java` / `ScholarshipSync.java` | Official provider discovery, bounded parsing, persisted refresh status and scheduled updates |
+| `SharedSessionConfig.java` | Shared PostgreSQL sessions for scaled containers |
+| `Bootstrap.java` | Optional administrator initialization (no scholarship seeds) |
 | `src/main/resources/templates/` | Server-rendered pages |
 | `src/main/resources/db/migration/` | Versioned database schema |
 
 OOP comments identify actual encapsulation, composition, interface implementation, inheritance and method overriding. See [docs/OOP_GUIDE.md](docs/OOP_GUIDE.md) for a short reading guide.
 
+See [the live release plan](docs/LIVE_RELEASE_PLAN.md) for the real-data and deployment acceptance checks.
+
 ## Production operation
 
-Use PostgreSQL, an SMTP provider, HTTPS, a durable private storage volume and managed backups. The `prod` profile rejects missing infrastructure settings, development databases and non-HTTPS origins. Secure cookies require HTTPS. `.env` files are consumed by Docker Compose; Java does not automatically load them.
+Use PostgreSQL and HTTPS. The `prod` profile rejects missing database settings, a weak/missing refresh secret and non-HTTPS origins. Login sessions, private files and fetched scholarships live in PostgreSQL and survive container restarts. No mail provider, recovery-email service, paid AI API or frontend build is required. `.env` files are consumed by Docker Compose; Java does not automatically load them.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md), [SECURITY.md](SECURITY.md), [ARCHITECTURE.md](ARCHITECTURE.md) and the [migration plan](docs/JAVA_MIGRATION_PLAN.md). Deployment infrastructure and credentials must be configured before a real release. This is a single-instance application; clustered sessions, object storage, OCR and calibrated ML selection predictions are outside the current implementation.
+Vercel's Container Runtime runs the Java application. A protected daily Vercel cron refreshes real scholarship sources even when containers have been idle; active containers also refresh periodically. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact free-plan setup and [SECURITY.md](SECURITY.md) for the enforcement boundaries. Free hosting/database services have quotas and availability limits; the application does not promise unlimited capacity or a provider-independent SLA.
+
+For a teacher presentation, load the catalogue before presenting so the persistent real-data cache is warm. Registration/login, profiles, saved programs, the budget planner and document vault operate on persisted user data. Provider application websites remain external services.

@@ -40,10 +40,10 @@ public class Copilot {
           + " application(s). "
           + (Boolean.TRUE.equals(user.get("approved"))
               ? "Manage your programs and review applicants in the institution workspace. Rankings"
-                    + " use the score frozen at submission; record an evidence-based reason for"
-                    + " every decision."
+                  + " use the score frozen at submission; record an evidence-based reason for"
+                  + " every decision."
               : "Your institution is awaiting administrator approval. Publishing and application"
-                    + " decisions remain locked until approval.");
+                  + " decisions remain locked until approval.");
     }
     if ("admin".equals(user.get("role"))) {
       long users = store.jdbc().queryForObject("SELECT COUNT(*) FROM users", Long.class);
@@ -64,7 +64,7 @@ public class Copilot {
           + " with the provider.";
     }
     if (query.contains("document")) {
-      return "Upload PDF, PNG, or JPEG files up to 5 MB in your document vault. Readable PDFs are"
+      return "Upload PDF, PNG, or JPEG files up to 4 MB in your document vault. Readable PDFs are"
           + " checked for consistency with your profile. Images and scans remain pending. A"
           + " text match does not prove authenticity.";
     }
@@ -94,20 +94,35 @@ public class Copilot {
     }
     if (query.contains("match") || query.contains("scholarship") || query.contains("eligible")) {
       var matches = matching.rank(profile, scholarships.catalogue(""));
+      if (matches.isEmpty())
+        return "No active provider listings are available yet. Check the catalogue's provider"
+            + " refresh status and try again after the next refresh.";
       return String.join(
           " ",
           matches.stream()
               .limit(3)
               .map(
-                  m ->
-                      asMap(m.get("scholarship")).get("name")
-                          + ": "
-                          + m.get("matchScore")
-                          + "% match; "
-                          + (Boolean.TRUE.equals(m.get("eligible"))
-                              ? "eligibility criteria met"
-                              : "criteria missing: " + m.get("missingCriteria"))
-                          + ". Check its deadline before applying.")
+                  m -> {
+                    var program = asMap(m.get("scholarship"));
+                    if ("official".equals(program.get("sourceType")))
+                      return program.get("name")
+                          + ": provider status "
+                          + program.getOrDefault("applicationStatus", "check provider")
+                          + "; "
+                          + (program.get("deadline") == null
+                              ? "deadline not specified"
+                              : "published deadline " + program.get("deadline"))
+                          + ". Verify eligibility on the official provider page linked from its"
+                          + " scholarship details.";
+                    return program.get("name")
+                        + ": "
+                        + m.get("matchScore")
+                        + "% profile match; "
+                        + (Boolean.TRUE.equals(m.get("eligible"))
+                            ? "listed eligibility criteria met"
+                            : "criteria missing: " + m.get("missingCriteria"))
+                        + ". Apply using the official link.";
+                  })
               .toList());
     }
     return "Complete your profile, browse the scholarship explorer, and inspect eligibility"

@@ -1,3 +1,7 @@
+# Historical migration plan
+
+This records the original Java migration. The current real-data, mail-free Vercel release is specified in [LIVE_RELEASE_PLAN.md](LIVE_RELEASE_PLAN.md); its later user requirements supersede the email and seed-data portions below.
+
 # ScholarAI Java migration
 
 ## Scope and preservation contract

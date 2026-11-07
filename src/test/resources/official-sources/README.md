@@ -1,0 +1,1 @@
+Parser fixture excerpts from the official University of Bristol scholarship pages/search index and Chevening application listing, fetched on 6 November 2026. These test-only snapshots are never used as production scholarship data. Live discovery fetches the provider; failures never load these files.

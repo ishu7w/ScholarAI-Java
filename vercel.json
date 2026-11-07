@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "container",
+  "env": {
+    "PORT": "8080"
+  },
+  "crons": [
+    {
+      "path": "/api/internal/scholarships/refresh",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

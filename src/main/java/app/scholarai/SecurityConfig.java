@@ -59,6 +59,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
+                        "/api/internal/scholarships/refresh",
                         "/styles.css",
                         "/original-design.css",
                         "/home.js",
@@ -72,14 +73,12 @@ public class SecurityConfig {
                         "/",
                         "/login",
                         "/register",
-                        "/forgot-password",
-                        "/reset-password",
                         "/catalogue",
                         "/scholarships",
-                        "/scholarships/*")
+                        "/scholarships/*",
+                        "/scholarships/*/apply")
                     .permitAll()
-                    .requestMatchers(
-                        HttpMethod.POST, "/register", "/forgot-password", "/reset-password")
+                    .requestMatchers(HttpMethod.POST, "/register")
                     .permitAll()
                     .requestMatchers("/dashboard/admin/**")
                     .hasRole("ADMIN")

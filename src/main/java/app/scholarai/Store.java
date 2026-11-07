@@ -72,6 +72,13 @@ public class Store {
     var result = object(row.get("payload").toString());
     result.put("status", row.get("status"));
     result.put("ownerId", row.get("owner_id"));
+    result.put("sourceType", row.get("source_type"));
+    result.put("sourceId", row.get("source_id"));
+    result.put("sourceUrl", row.get("source_url"));
+    result.put("applicationUrl", row.get("application_url"));
+    result.put("lastFetchedAt", row.get("synced_at"));
+    result.put("stale", row.get("stale"));
+
     return result;
   }
 

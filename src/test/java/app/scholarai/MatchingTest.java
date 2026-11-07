@@ -25,8 +25,9 @@ class MatchingTest {
     profile.put("recommendationStrength", 100);
     profile.put("behaviourScore", 100);
     assertThat(engine.score(profile)).isEqualTo(100);
-    assertThat(engine.score(Map.of()))
-        .isEqualTo(18); // The original log-need curve gives income=0 the maximum need score.
+    // Missing income is unknown evidence, not a declared zero-income household.
+    assertThat(engine.score(Map.of())).isZero();
+    assertThat(engine.score(Map.of("familyIncome", 0))).isEqualTo(18);
     profile.put("cgpa", 0);
     assertThat(engine.score(profile)).isEqualTo(82);
   }
@@ -105,5 +106,24 @@ class MatchingTest {
         assertThat(((Number) actual.get(key)).longValue())
             .isEqualTo(((Number) expected.get(key)).longValue());
     }
+  }
+
+  @Test
+  void officialProviderRecordsDoNotInventEligibilityOrWinningPredictions() {
+    var result =
+        engine.match(
+            Map.of("cgpa", 10, "familyIncome", 1000),
+            Map.of(
+                "sourceType",
+                "official",
+                "name",
+                "Provider programme",
+                "applicationUrl",
+                "https://provider.example.test/apply"));
+    assertThat(result.get("eligibilityUnknown")).isEqualTo(true);
+    assertThat(result.get("eligible")).isEqualTo(false);
+    assertThat(result.get("matchScore")).isNull();
+    assertThat(result.get("winProbability")).isNull();
+    assertThat((List<?>) result.get("missingCriteria")).isNotEmpty();
   }
 }

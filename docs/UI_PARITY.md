@@ -4,7 +4,7 @@
 
 The landing page uses the original exported markup and styles, local Familjen Grotesk and Spline Sans Mono fonts, paper ground `#e8e6df`, square geometry, and vermilion markers `#c4442c`. The Java workspace retains the paper/ink visual system, desktop sidebar and the original student, institution, administration, scholarship, resume, and financial-aid route families.
 
-Native HTML details, forms, a dialog and small browser scripts replace React interaction handlers. Java remains responsible for authentication, persistence, scoring and workflow authorization. The ten scoring weights and original scholarship/funding content are preserved separately from the UI implementation.
+Native HTML details, forms, a dialog and small browser scripts replace React interaction handlers. Java remains responsible for authentication, persistence, scoring and workflow authorization. The ten scoring weights remain independently testable. The production catalogue and funding directory now use actual official-source imports and institution-published records; invented legacy programmes and the static funding directory are removed.
 
 ## Material fixes from the UI review
 
@@ -34,4 +34,16 @@ Authenticated end-to-end verification, Java tests and packaged-image verificatio
 
 This is a Java-rendered migration, not a pixel-diff certification of every original screen. The workspaces use new Thymeleaf templates in the existing visual system. The original React/GSAP motion choreography, pointer effects and animated counters have been simplified to stable native/browser behavior. The original multi-step registration presentation is a single validated account form. Real account authentication and institution approval deliberately replace simulated demo success.
 
-The original brochure's marketing statistics, testimonials, prices and organization claims are demonstration content, not independently validated deployment results. The page and project documentation identify their demonstration origin. Provider deadlines are preserved reference content and must be checked with the official provider.
+## Removal of invented content and live-source contracts
+
+The original brochure's invented marketing numbers, named testimonials, subscription prices, pilot periods and unsupported enterprise promises have been removed rather than labelled as examples. Their card/grid structure now presents actual role workflows and working navigation. Hero chips describe implemented capabilities rather than displaying invented personal scores or risk results.
+
+Home counters use real `platformStats` values: `activeScholarships`, `approvedInstitutions`, `registeredStudents` and `decisionsRecorded`. If a model value is unavailable the template shows an em dash, never an invented count.
+
+The catalogue and funding directory share imported provider records. The UI distinguishes `sourceType=official` from institution-managed programmes. `applicationUrl` powers the primary external application link; if absent, `sourceUrl` offers a clearly labelled provider-process link. Institution-managed submissions are a separate secondary action. Official records without structured numeric requirements show provider terms rather than zero amounts/seats, invented eligibility gates, match percentages or winning estimates. Missing deadlines and unconfirmed application windows are explicit. Closed provider windows are labelled closed and do not receive an Apply now label.
+
+Provider refresh status uses actual `sourceStatuses` records (`name`, `status`, `lastFetchedAt`, `count`, `sourceUrl`). The template presents success, partial and error outcomes without exposing internal exception text. Records marked `stale` identify cached provider information and direct users to current official terms. The static `funding.json` production resource was removed after its Java reference was replaced by the live catalogue.
+
+The student workspace also withholds a personal score and component values until the profile is complete, rather than presenting a score derived from missing income/profile inputs as an assessed result.
+
+The live-source UI update passed a static content audit: no invented testimonials, prices or demonstration metrics remain in the landing text; every local landing-page section link points to an existing section; no nested link/button controls remain; JavaScript syntax and resource diff checks pass. Runtime verification of the latest live importer/model integration is coordinated by the primary agent after all parallel changes land. The earlier 21 viewport checks and five axe scans above describe the pre-live-source UI revision and must not be represented as a fresh scan of the final live-source revision.

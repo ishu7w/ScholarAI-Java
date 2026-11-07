@@ -55,7 +55,9 @@ public class Matching {
   public List<Map<String, Object>> components(Map<String, Object> p) {
     double[] raw = {
       number(p, "cgpa") * 8 + number(p, "attendance") * .2,
-      100 - (Math.log10(Math.max(number(p, "familyIncome"), 1000)) - 3) * 45,
+      p.containsKey("familyIncome")
+          ? 100 - (Math.log10(Math.max(number(p, "familyIncome"), 1000)) - 3) * 45
+          : 0,
       number(p, "achievements") * 14 + number(p, "hackathons") * 8 + number(p, "sportsLevel") * 10,
       number(p, "researchPapers") * 25,
       number(p, "leadershipRoles") * 28,
@@ -130,6 +132,23 @@ public class Matching {
 
   @SuppressWarnings("unchecked")
   public Map<String, Object> match(Map<String, Object> p, Map<String, Object> scholarship) {
+    if ("official".equals(scholarship.get("sourceType"))) {
+      Map<String, Object> result = new LinkedHashMap<>();
+      result.put("scholarship", scholarship);
+      result.put("eligible", false);
+      result.put("eligibilityUnknown", true);
+      result.put("matchScore", null);
+      result.put("winProbability", null);
+      result.put(
+          "missingCriteria",
+          List.of("Provider-specific eligibility must be checked on the official website."));
+      result.put("reasons", List.of());
+      result.put(
+          "fairnessNote",
+          "No eligibility or selection probability has been inferred from incomplete provider"
+              + " data.");
+      return result;
+    }
     var c = (Map<String, Object>) scholarship.get("criteria");
     List<String> missing = new ArrayList<>(), reasons = new ArrayList<>();
     if (number(p, "cgpa") < number(c, "minCgpa"))
@@ -207,7 +226,8 @@ public class Matching {
         .map(s -> match(profile, s))
         .sorted(
             Comparator.comparingLong(
-                    (Map<String, Object> m) -> ((Number) m.get("matchScore")).longValue())
+                    (Map<String, Object> m) ->
+                        (m.get("matchScore") instanceof Number n ? n.longValue() : -1))
                 .reversed())
         .toList();
   }

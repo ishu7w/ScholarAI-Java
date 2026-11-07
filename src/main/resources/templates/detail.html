@@ -1,12 +1,17 @@
 <!doctype html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{layout :: head}"></head>
   <body>
     <header th:replace="~{layout :: header}"></header>
     <aside th:replace="~{layout :: sidebar}"></aside>
-    <main id="main-content" tabindex="-1" class="container">
+    <main class="container" id="main-content" tabindex="-1">
       <a href="/scholarships">← All scholarships</a>
       <div th:replace="~{layout :: heading}"></div>
+      <p class="notice" role="status" th:if="${scholarship['stale'] == true}">
+        This is previously retrieved provider information. Confirm the current
+        deadline and requirements on the official website.
+      </p>
       <div class="grid two">
         <section class="panel">
           <p
@@ -15,19 +20,38 @@
           ></p>
           <p
             class="amount"
-            th:text="${scholarship.currency + ' ' + scholarship.amount}"
+            th:if="${scholarship['sourceType'] == 'official'}"
+            th:text="${scholarship['amountText'] ?: 'See provider terms'}"
+          ></p>
+          <p
+            class="amount"
+            th:text="${scholarship['amount'] == null ? 'See provider terms' : scholarship.currency + ' ' + #numbers.formatDecimal(scholarship.amount,1,'COMMA',2,'POINT')}"
+            th:unless="${scholarship['sourceType'] == 'official'}"
           ></p>
           <p th:text="${scholarship.description}"></p>
           <dl>
             <dt>Deadline</dt>
-            <dd th:text="${scholarship.deadline}"></dd>
-            <dt>Seats</dt>
-            <dd th:text="${scholarship.seats}"></dd>
-            <dt>Status</dt>
-            <dd th:text="${scholarship.status}"></dd>
+            <dd
+              th:text="${scholarship['deadline'] == null ? 'Check the current provider call' : scholarship.deadline}"
+            ></dd>
+            <dt th:if="${scholarship['sourceType'] != 'official'}">Seats</dt>
+            <dd
+              th:if="${scholarship['sourceType'] != 'official'}"
+              th:text="${scholarship['seats'] ?: 'See provider terms'}"
+            ></dd>
+            <dt>Application availability</dt>
+            <dd
+              th:text="${scholarship['applicationStatus'] == 'open' ? 'Last retrieved provider status: open' : (scholarship['applicationStatus'] == 'closed' ? 'Last retrieved provider status: closed' : 'Application window not confirmed; check provider')}"
+            ></dd>
           </dl>
-          <h3>Eligibility criteria</h3>
-          <dl>
+          <h3>Eligibility requirements</h3>
+          <p
+            th:if="${scholarship['sourceType'] == 'official'}"
+            th:text="${scholarship['eligibilityText'] ?: 'The provider has not supplied structured eligibility criteria. Read the official requirements before applying.'}"
+          ></p>
+          <dl
+            th:if="${scholarship['sourceType'] != 'official' and scholarship['criteria'] != null}"
+          >
             <dt>Minimum CGPA</dt>
             <dd th:text="${scholarship.criteria.minCgpa + ' / 10'}"></dd>
             <dt>Minimum attendance</dt>
@@ -73,9 +97,60 @@
               Applicants with a disability
             </dd>
           </dl>
+          <div class="source-provenance">
+            <p
+              class="small"
+              th:if="${scholarship['lastFetchedAt'] != null}"
+              th:text="${'Source refreshed: ' + scholarship.lastFetchedAt}"
+            ></p>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              th:href="${scholarship.sourceUrl}"
+              th:if="${scholarship['sourceUrl'] != null}"
+              >Read the official source ↗</a
+            >
+          </div>
         </section>
         <section class="panel">
-          <th:block th:if="${match != null}"
+          <p class="eyebrow">OFFICIAL APPLICATION</p>
+          <h2>Continue with the provider.</h2>
+          <p>
+            Apply now opens the provider’s website. That provider controls the
+            application process, eligibility, award terms and final selection.
+          </p>
+          <div class="actions">
+            <a
+              class="button"
+              rel="noopener noreferrer"
+              target="_blank"
+              th:href="${scholarship.applicationUrl}"
+              th:if="${scholarship['applicationUrl'] != null and scholarship['applicationUrl'] != ''}"
+              th:text="${scholarship['applicationStatus'] == 'closed' ? 'View provider application page ↗' : 'Apply now ↗'}"
+              >Apply now ↗</a
+            ><a
+              class="button secondary"
+              rel="noopener noreferrer"
+              target="_blank"
+              th:href="${scholarship.sourceUrl}"
+              th:if="${(scholarship['applicationUrl'] == null or scholarship['applicationUrl'] == '') and scholarship['sourceUrl'] != null}"
+              >Check provider application process ↗</a
+            >
+          </div>
+          <p
+            class="notice"
+            th:if="${(scholarship['applicationUrl'] == null or scholarship['applicationUrl'] == '') and scholarship['sourceUrl'] == null}"
+          >
+            An official application link has not been published for this
+            opportunity.
+          </p>
+          <p class="small" th:if="${scholarship['sourceType'] == 'official'}">
+            Provider eligibility and selection cannot be inferred from missing
+            data. No match percentage or winning estimate is generated for this
+            entry.
+          </p>
+          <th:block
+            th:if="${match != null and scholarship['sourceType'] != 'official'}"
             ><p class="eyebrow">YOUR MATCH</p>
             <p class="score" th:text="${match.matchScore + '%'}"></p>
             <h2
@@ -98,17 +173,17 @@
             </p>
             <div class="actions">
               <form
-                th:action="@{/scholarships/{id}/apply(id=${scholarship.id})}"
                 aria-describedby="application-sharing-notice"
                 method="post"
+                th:action="@{/scholarships/{id}/apply(id=${scholarship.id})}"
               >
-                <button th:disabled="${!match.eligible}">
-                  Submit application ↗
+                <button class="secondary" th:disabled="${!match.eligible}">
+                  Submit to institution ↗
                 </button>
               </form>
               <form
-                th:action="@{/scholarships/{id}/save(id=${scholarship.id})}"
                 method="post"
+                th:action="@{/scholarships/{id}/save(id=${scholarship.id})}"
               >
                 <button class="secondary">Toggle saved</button>
               </form>
@@ -117,7 +192,8 @@
               Closed programs, expired deadlines, incomplete profiles, and
               duplicate submissions are blocked by the server.
             </p></th:block
-          ><th:block th:if="${match == null}"
+          ><th:block
+            th:if="${match == null and scholarship['sourceType'] != 'official'}"
             ><h2>Your story belongs here.</h2>
             <p>
               Sign in as a student and complete your profile to get an
@@ -125,6 +201,13 @@
             </p>
             <a class="button" href="/login">Sign in ↗</a></th:block
           >
+          <form
+            method="post"
+            th:action="@{/scholarships/{id}/save(id=${scholarship.id})}"
+            th:if="${scholarship['sourceType'] == 'official' and user != null and user.role == 'student'}"
+          >
+            <button class="secondary">Toggle saved</button>
+          </form>
         </section>
       </div>
     </main>

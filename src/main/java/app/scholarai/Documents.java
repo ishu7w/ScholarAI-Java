@@ -3,33 +3,25 @@ package app.scholarai;
 import static app.scholarai.Accounts.require;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 /**
- * Encapsulation: private filesystem paths never come from user filenames or public URLs.
+ * Encapsulation: private document bytes are stored in PostgreSQL, never exposed as public files.
  * Composition: document checks and persistence are separate collaborators, not subclasses.
  */
 public class Documents {
   private final Store store;
-  private final Path root;
   private final DocumentChecks checks;
 
-  public Documents(Store store, DocumentChecks checks, @Value("${app.storage}") String root)
-      throws IOException {
+  public Documents(Store store, DocumentChecks checks) {
     this.store = store;
     this.checks = checks;
-    this.root = Path.of(root).toAbsolutePath().normalize();
-    Files.createDirectories(this.root);
   }
 
   @Transactional
@@ -37,7 +29,7 @@ public class Documents {
     require(
         Set.of("resume", "income_cert", "marksheet", "id").contains(kind),
         "Choose a valid document kind.");
-    require(!file.isEmpty() && file.getSize() <= 5 * 1024 * 1024, "Upload a file up to 5 MB.");
+    require(!file.isEmpty() && file.getSize() <= 4 * 1024 * 1024, "Upload a file up to 4 MB.");
     // Serialize one account's uploads so concurrent requests cannot exceed its storage quota.
     var person = store.one("SELECT name FROM users WHERE id=? FOR UPDATE", user);
     require(person != null, "Account not found.");
@@ -66,26 +58,9 @@ public class Documents {
                 .orElse("document")
                 .replaceAll("[^a-zA-Z0-9 ._-]", "_");
     if (name.length() > 200) name = name.substring(name.length() - 200);
-    Path destination = root.resolve(id);
     var result =
         checks.check(kind, media, bytes, store.profile(user), person.get("name").toString());
-    try {
-      Files.write(destination, bytes, StandardOpenOption.CREATE_NEW);
-    } catch (IOException ex) {
-      cleanup(destination);
-      throw ex;
-    }
-    // The filesystem is not transactional: remove new bytes if the surrounding DB transaction rolls
-    // back.
-    if (TransactionSynchronizationManager.isSynchronizationActive())
-      TransactionSynchronizationManager.registerSynchronization(
-          new TransactionSynchronization() {
-            @Override
-            public void afterCompletion(int status) {
-              if (status != STATUS_COMMITTED) cleanup(destination);
-            }
-          });
-    try {
+    {
       store
           .jdbc()
           .update(
@@ -99,10 +74,10 @@ public class Documents {
               kind,
               result.status(),
               store.json(result));
+      store
+          .jdbc()
+          .update("INSERT INTO document_contents(document_id,content) VALUES (?,?)", id, bytes);
       store.audit(user, "document.uploaded", id);
-    } catch (RuntimeException ex) {
-      Files.deleteIfExists(destination);
-      throw ex;
     }
   }
 
@@ -128,34 +103,24 @@ public class Documents {
     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Document not found.");
   }
 
-  public Path path(String id) {
-    return root.resolve(UUID.fromString(id).toString());
+  public byte[] content(String id) {
+    byte[] data =
+        store
+            .jdbc()
+            .query(
+                "SELECT content FROM document_contents WHERE document_id=?",
+                rs -> rs.next() ? rs.getBytes(1) : null,
+                id);
+    if (data == null)
+      throw new ResponseStatusException(
+          HttpStatus.GONE, "This legacy file has not been migrated to durable storage.");
+    return data;
   }
 
   @Transactional
-  public void delete(String user, String id) throws IOException {
+  public void delete(String user, String id) {
     owned(user, id);
-    Path file = path(id);
     store.jdbc().update("DELETE FROM documents WHERE id=? AND owner_id=?", id, user);
     store.audit(user, "document.deleted", id);
-    // Keep the original bytes if a failed audit/database commit restores the document row.
-    if (TransactionSynchronizationManager.isSynchronizationActive())
-      TransactionSynchronizationManager.registerSynchronization(
-          new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-              cleanup(file);
-            }
-          });
-    else Files.deleteIfExists(file);
-  }
-
-  private void cleanup(Path file) {
-    try {
-      Files.deleteIfExists(file);
-    } catch (IOException ex) {
-      org.slf4j.LoggerFactory.getLogger(Documents.class)
-          .warn("Private document cleanup failed; reconcile document storage.");
-    }
   }
 }

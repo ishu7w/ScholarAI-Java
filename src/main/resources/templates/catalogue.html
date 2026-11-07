@@ -1,26 +1,27 @@
 <!doctype html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{layout :: head}"></head>
   <body>
     <header th:replace="~{layout :: header}"></header>
     <aside th:replace="~{layout :: sidebar}"></aside>
-    <main id="main-content" tabindex="-1" class="container">
+    <main class="container" id="main-content" tabindex="-1">
       <div th:replace="~{layout :: heading}"></div>
-      <form action="/scholarships" method="get" class="inline-form search">
+      <form action="/scholarships" class="inline-form search" method="get">
         <label class="grow"
           >Search scholarships<input
             name="q"
-            th:value="${q}"
-            placeholder="Search by name, provider, category, or skill" /></label
+            placeholder="Search by name, provider, category, or skill"
+            th:value="${q}" /></label
         ><button>Search ↗</button>
       </form>
       <p th:text="${scholarships.size() + ' opportunities in this view'}"></p>
       <p class="notice">
-        Reference programs are demonstration catalogue content. Check provider
-        terms and deadlines before relying on any award. Institutions can
-        publish live programs after approval.
+        Opportunities come from official provider sources and approved
+        institutions. Apply on the provider website and confirm the current
+        eligibility, deadline and award terms there.
       </p>
-      <p class="notice" th:if="${scholarships.isEmpty()}" role="status">
+      <p class="notice" role="status" th:if="${scholarships.isEmpty()}">
         No scholarships match this view. Try another search, or explore the full
         catalogue.
       </p>
@@ -33,20 +34,59 @@
               th:text="${s.name}"
             ></a>
           </h2>
+          <p class="notice small" th:if="${s['stale'] == true}">
+            Previously retrieved provider information. Confirm the current terms
+            on the official website.
+          </p>
           <p th:text="${s.description}"></p>
           <div class="row">
             <strong
               class="amount"
-              th:text="${s.currency + ' ' + #numbers.formatDecimal(s.amount,1,'COMMA',0,'POINT')}"
+              th:if="${s['sourceType'] == 'official'}"
+              th:text="${s['amountText'] ?: 'See provider terms'}"
             ></strong
-            ><span th:text="${'Deadline ' + s.deadline}"></span>
+            ><strong
+              class="amount"
+              th:text="${s['amount'] == null ? 'See provider terms' : s.currency + ' ' + #numbers.formatDecimal(s.amount,1,'COMMA',2,'POINT')}"
+              th:unless="${s['sourceType'] == 'official'}"
+            ></strong
+            ><span
+              th:text="${s['deadline'] == null ? 'Deadline: check provider' : 'Deadline ' + s.deadline}"
+            ></span>
+          </div>
+          <p
+            class="small"
+            th:if="${s['sourceType'] == 'official'}"
+            th:text="${s['applicationStatus'] == 'open' ? 'Last retrieved provider status: open' : (s['applicationStatus'] == 'closed' ? 'Last retrieved provider status: closed' : 'Application window not confirmed; check provider')}"
+          ></p>
+          <p
+            class="small"
+            th:if="${s['lastFetchedAt'] != null}"
+            th:text="${'Source refreshed: ' + s.lastFetchedAt}"
+          ></p>
+          <div class="actions">
+            <a
+              class="button"
+              rel="noopener noreferrer"
+              target="_blank"
+              th:href="${s.applicationUrl}"
+              th:if="${s['applicationUrl'] != null and s['applicationUrl'] != ''}"
+              th:text="${s['applicationStatus'] == 'closed' ? 'View provider application page ↗' : 'Apply now ↗'}"
+              >Apply now ↗</a
+            ><a
+              rel="noopener noreferrer"
+              target="_blank"
+              th:href="${s.sourceUrl}"
+              th:if="${(s['applicationUrl'] == null or s['applicationUrl'] == '') and s['sourceUrl'] != null}"
+              >Check provider application process ↗</a
+            >
           </div>
           <a class="arrow-link" th:href="@{/scholarships/{id}(id=${s.id})}"
-            >View eligibility & details ↗</a
+            >View eligibility &amp; details ↗</a
           >
         </article>
       </section>
-      <section th:if="${matches != null}" class="section">
+      <section class="section" th:if="${matches != null}">
         <h2>Your ranked matches</h2>
         <div class="row" th:each="m : ${matches}">
           <a
@@ -54,11 +94,12 @@
             th:text="${m.scholarship.name}"
           ></a
           ><span
-            th:text="${m.matchScore + '% match · ' + (m.eligible ? 'Eligible' : 'Criteria missing')}"
+            th:text="${m.scholarship['sourceType'] == 'official' ? 'Review official provider eligibility' : (m['matchScore'] == null ? 'Eligibility review required' : m.matchScore + '% match · ' + (m.eligible ? 'Eligible' : 'Criteria missing'))}"
           ></span>
         </div>
       </section>
       <section th:replace="~{layout :: copilot}"></section>
+      <section th:replace="~{layout :: source-status}"></section>
     </main>
     <footer th:replace="~{layout :: footer}"></footer>
   </body>

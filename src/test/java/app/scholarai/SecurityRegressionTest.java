@@ -3,7 +3,6 @@ package app.scholarai;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.file.Files;
 import java.util.*;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.font.*;
@@ -21,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
       "spring.datasource.url=${TEST_DATABASE_URL:jdbc:h2:mem:security;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1}",
       "spring.datasource.username=${TEST_DATABASE_USER:sa}",
       "spring.datasource.password=${TEST_DATABASE_PASSWORD:}",
-      "app.storage=target/security-documents"
+      "app.scholarships.sync-enabled=false"
     })
 class SecurityRegressionTest {
   @Autowired Store store;
@@ -46,9 +45,12 @@ class SecurityRegressionTest {
     return id;
   }
 
+  private byte[] imageBytes() {
+    return new byte[] {(byte) 137, 80, 78, 71, 13, 10, 26, 10};
+  }
+
   private MockMultipartFile image() {
-    return new MockMultipartFile(
-        "file", "test.png", "image/png", new byte[] {(byte) 137, 80, 78, 71, 13, 10, 26, 10});
+    return new MockMultipartFile("file", "test.png", "image/png", imageBytes());
   }
 
   @Test
@@ -65,12 +67,18 @@ class SecurityRegressionTest {
               }
               var row = store.one("SELECT id FROM documents WHERE owner_id=?", student);
               String created = row.get("id").toString();
-              assertThat(Files.exists(documents.path(created))).isTrue();
+              assertThat(documents.content(created)).isEqualTo(imageBytes());
+              assertThat(
+                      store.one(
+                          "SELECT document_id FROM document_contents WHERE document_id=?", created))
+                  .isNotNull();
               status.setRollbackOnly();
               return created;
             });
     assertThat(store.one("SELECT id FROM documents WHERE id=?", id)).isNull();
-    assertThat(Files.exists(documents.path(id))).isFalse();
+    assertThat(store.one("SELECT document_id FROM document_contents WHERE document_id=?", id))
+        .isNull();
+    assertThatThrownBy(() -> documents.content(id)).isInstanceOf(ResponseStatusException.class);
   }
 
   @Test
@@ -89,24 +97,19 @@ class SecurityRegressionTest {
         store.one("SELECT id FROM documents WHERE owner_id=?", student).get("id").toString();
     tx.executeWithoutResult(
         status -> {
-          try {
-            documents.delete(student, id);
-          } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-          }
+          documents.delete(student, id);
           status.setRollbackOnly();
         });
     assertThat(store.one("SELECT id FROM documents WHERE id=?", id)).isNotNull();
-    assertThat(Files.exists(documents.path(id))).isTrue();
+    assertThat(documents.content(id)).isEqualTo(imageBytes());
     tx.executeWithoutResult(
         status -> {
-          try {
-            documents.delete(student, id);
-          } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-          }
+          documents.delete(student, id);
         });
-    assertThat(Files.exists(documents.path(id))).isFalse();
+    assertThat(store.one("SELECT id FROM documents WHERE id=?", id)).isNull();
+    assertThat(store.one("SELECT document_id FROM document_contents WHERE document_id=?", id))
+        .isNull();
+    assertThatThrownBy(() -> documents.content(id)).isInstanceOf(ResponseStatusException.class);
   }
 
   private byte[] pdf(String text, int pages) throws Exception {
@@ -160,16 +163,19 @@ class SecurityRegressionTest {
         .withProperty("DATABASE_USER", "scholarai")
         .withProperty("DATABASE_PASSWORD", "test-only-password")
         .withProperty("APP_BASE_URL", "https://scholarai.example.com")
-        .withProperty("MAIL_FROM", "scholarai@example.com")
-        .withProperty("SMTP_HOST", "smtp.example.com")
-        .withProperty("DOCUMENT_STORAGE", "/data/private-documents")
-        .withProperty("SMTP_USERNAME", "test-user")
-        .withProperty("SMTP_PASSWORD", "test-only-smtp-password");
+        .withProperty("CRON_SECRET", "test-only-cron-secret-with-at-least-32-characters");
   }
 
   @Test
-  void productionRejectsBrokenRecoveryOriginsAndIncompleteMailConfiguration() {
+  void productionRejectsUnsafeOriginsAndMissingCronSecret() {
     assertThatCode(() -> new ProductionConfig(production())).doesNotThrowAnyException();
+    assertThatCode(
+            () ->
+                new ProductionConfig(
+                    production()
+                        .withProperty("DATABASE_URL", "")
+                        .withProperty("JDBC_DATABASE_URL", "jdbc:postgresql://database/scholarai")))
+        .doesNotThrowAnyException();
     for (String url :
         List.of(
             "https://scholarai.example.com/path",
@@ -178,18 +184,8 @@ class SecurityRegressionTest {
             "http://scholarai.example.com"))
       assertThatThrownBy(() -> new ProductionConfig(production().withProperty("APP_BASE_URL", url)))
           .isInstanceOf(IllegalStateException.class);
-    assertThatThrownBy(
-            () -> new ProductionConfig(production().withProperty("DOCUMENT_STORAGE", "./relative")))
+    assertThatThrownBy(() -> new ProductionConfig(production().withProperty("CRON_SECRET", "")))
         .isInstanceOf(IllegalStateException.class);
-    assertThatThrownBy(() -> new ProductionConfig(production().withProperty("SMTP_PASSWORD", "")))
-        .isInstanceOf(IllegalStateException.class);
-    assertThatCode(
-            () ->
-                new ProductionConfig(
-                    production()
-                        .withProperty("SMTP_AUTH", "false")
-                        .withProperty("SMTP_PASSWORD", "")))
-        .doesNotThrowAnyException();
   }
 
   @Test
@@ -201,6 +197,7 @@ class SecurityRegressionTest {
     form.put("provider", "Test Institution");
     form.put("category", "Merit");
     form.put("description", "A test award.");
+    form.put("applicationUrl", "https://provider.example.test/apply");
     form.put("currency", "USD");
     form.put("deadline", "2099-12-31");
     form.put("amount", "1000");
@@ -222,5 +219,36 @@ class SecurityRegressionTest {
     assertThatThrownBy(() -> Accounts.password("😀".repeat(6)))
         .isInstanceOf(ResponseStatusException.class);
     assertThatCode(() -> Accounts.password("😀".repeat(12))).doesNotThrowAnyException();
+  }
+
+  @Test
+  void uploadAboveFourMegabytesDoesNotPersistMetadataOrBytes() {
+    String student = user("student");
+    byte[] bytes = new byte[4 * 1024 * 1024 + 1];
+    var file = new MockMultipartFile("file", "oversized.pdf", "application/pdf", bytes);
+    assertThatThrownBy(
+            () ->
+                new TransactionTemplate(transactionManager)
+                    .executeWithoutResult(
+                        status -> {
+                          try {
+                            documents.upload(student, "resume", file);
+                          } catch (java.io.IOException ex) {
+                            throw new IllegalStateException(ex);
+                          }
+                        }))
+        .isInstanceOf(ResponseStatusException.class);
+    assertThat(
+            store
+                .jdbc()
+                .queryForObject(
+                    "SELECT COUNT(*) FROM documents WHERE owner_id=?", Integer.class, student))
+        .isZero();
+    assertThat(
+            store.rows(
+                "SELECT c.document_id FROM document_contents c JOIN documents d ON"
+                    + " d.id=c.document_id WHERE d.owner_id=?",
+                student))
+        .isEmpty();
   }
 }

@@ -21,7 +21,7 @@ public class WebErrors {
   String upload(Model model, HttpServletResponse response) {
     response.setStatus(HttpStatus.PAYLOAD_TOO_LARGE.value());
     model.addAttribute("errorTitle", "File too large");
-    model.addAttribute("detail", "Upload a file no larger than 5 MB.");
+    model.addAttribute("detail", "Upload a file no larger than 4 MB.");
     return "error";
   }
 }

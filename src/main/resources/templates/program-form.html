@@ -1,130 +1,141 @@
 <!doctype html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{layout :: head}"></head>
   <body>
     <header th:replace="~{layout :: header}"></header>
     <aside th:replace="~{layout :: sidebar}"></aside>
-    <main id="main-content" tabindex="-1" class="container">
+    <main class="container" id="main-content" tabindex="-1">
       <div th:replace="~{layout :: heading}"></div>
       <p>
         Define every eligibility gate explicitly. Blank location and field lists
         mean any location or field.
       </p>
-      <form th:action="@{''}" method="post" class="panel">
+      <form class="panel" method="post" th:action="@{''}">
         <div class="grid two">
           <label
             >Scholarship name<input
-              type="text"
-              name="name"
-              required
               maxlength="200"
-              th:value="${scholarship['name']}" /></label
+              name="name"
+              required=""
+              th:value="${scholarship['name']}"
+              type="text" /></label
           ><label
             >Provider<input
-              type="text"
-              name="provider"
-              required
               maxlength="200"
-              th:value="${scholarship['provider']}" /></label
+              name="provider"
+              required=""
+              th:value="${scholarship['provider']}"
+              type="text" /></label
           ><label
             >Award amount<input
-              type="number"
-              name="amount"
-              required
-              min="1"
               max="100000000"
+              min="1"
+              name="amount"
+              required=""
               step="0.01"
-              th:value="${scholarship['amount']}" /></label
+              th:value="${scholarship['amount']}"
+              type="number" /></label
           ><label
             >Available seats<input
-              type="number"
-              name="seats"
-              required
-              min="1"
               max="1000000"
+              min="1"
+              name="seats"
+              required=""
               step="1"
-              th:value="${scholarship['seats']}" /></label
+              th:value="${scholarship['seats']}"
+              type="number" /></label
           ><label
             >Deadline (UTC)<input
-              type="date"
               name="deadline"
-              required
-              th:value="${scholarship['deadline']}" /></label
+              required=""
+              th:value="${scholarship['deadline']}"
+              type="date" /></label
           ><label
             >Currency<select name="currency">
               <option
                 th:each="c : ${ {'USD','INR','GBP','EUR','CAD','AUD'} }"
-                th:value="${c}"
-                th:text="${c}"
                 th:selected="${scholarship['currency'] == c}"
+                th:text="${c}"
+                th:value="${c}"
               ></option></select></label
           ><label
             >Category<select name="category">
               <option
                 th:each="c : ${ {'Government','Private','NGO','University','International','Corporate','Research Grant','Need-based','Merit','Women','Minority','Sports'} }"
-                th:value="${c}"
-                th:text="${c}"
                 th:selected="${scholarship['category'] == c}"
+                th:text="${c}"
+                th:value="${c}"
               ></option></select></label
           ><label
             >Status<select name="status">
               <option
                 th:each="s : ${ {'active','closed','draft'} }"
-                th:value="${s}"
-                th:text="${s}"
                 th:selected="${scholarship['status'] == s}"
+                th:text="${s}"
+                th:value="${s}"
               ></option></select></label
           ><label
             >Tags (comma-separated)<input
-              type="text"
-              name="tags"
               maxlength="1000"
-              th:value="${scholarship['tags'] == null ? '' : #strings.listJoin(scholarship['tags'], ', ')}" /></label
+              name="tags"
+              th:value="${scholarship['tags'] == null ? '' : #strings.listJoin(scholarship['tags'], ', ')}"
+              type="text" /></label
           ><label
             >Minimum CGPA<input
-              type="number"
-              name="minCgpa"
-              required
-              min="0"
               max="10"
+              min="0"
+              name="minCgpa"
+              required=""
               step="0.01"
-              th:value="${criteria['minCgpa']}" /></label
+              th:value="${criteria['minCgpa']}"
+              type="number" /></label
           ><label
             >Minimum attendance %<input
-              type="number"
-              name="minAttendance"
-              required
-              min="0"
               max="100"
+              min="0"
+              name="minAttendance"
+              required=""
               step="1"
-              th:value="${criteria['minAttendance']}" /></label
+              th:value="${criteria['minAttendance']}"
+              type="number" /></label
           ><label
             >Maximum annual income (USD; blank for none)<input
-              type="number"
-              name="maxIncome"
-              min="0"
               max="1000000000"
+              min="0"
+              name="maxIncome"
               step="0.01"
-              th:value="${criteria['maxIncome']}" /></label
+              th:value="${criteria['maxIncome']}"
+              type="number" /></label
           ><label
             >Locations (comma-separated)<input
-              type="text"
-              name="locations"
               maxlength="1000"
-              th:value="${criteria['locations'] == null ? '' : #strings.listJoin(criteria['locations'], ', ')}" /></label
+              name="locations"
+              th:value="${criteria['locations'] == null ? '' : #strings.listJoin(criteria['locations'], ', ')}"
+              type="text" /></label
           ><label
             >Fields of study (comma-separated)<input
-              type="text"
-              name="fields"
               maxlength="1000"
+              name="fields"
               th:value="${criteria['fields'] == null ? '' : #strings.listJoin(criteria['fields'], ', ')}"
+              type="text"
+          /></label>
+          <label
+            >Official application URL (HTTPS)<input
+              maxlength="2048"
+              name="applicationUrl"
+              pattern="https://.*"
+              placeholder="https://"
+              required=""
+              th:value="${scholarship['applicationUrl']}"
+              type="url"
           /></label>
         </div>
         <label
           >Description<textarea
-            name="description"
-            required
             maxlength="5000"
+            name="description"
+            required=""
             rows="5"
             th:text="${scholarship['description']}"
           ></textarea>
@@ -132,39 +143,39 @@
         <div class="checks">
           <label class="checkbox"
             ><input
-              type="checkbox"
               name="requiresResearch"
               th:checked="${criteria['requiresResearch'] == true}"
+              type="checkbox"
             />Research required</label
           ><label class="checkbox"
             ><input
-              type="checkbox"
               name="requiresLeadership"
               th:checked="${criteria['requiresLeadership'] == true}"
+              type="checkbox"
             />Leadership required</label
           ><label class="checkbox"
             ><input
-              type="checkbox"
               name="womenOnly"
               th:checked="${criteria['womenOnly'] == true}"
+              type="checkbox"
             />Women only</label
           ><label class="checkbox"
             ><input
-              type="checkbox"
               name="minorityOnly"
               th:checked="${criteria['minorityOnly'] == true}"
+              type="checkbox"
             />Minority-community only</label
           ><label class="checkbox"
             ><input
-              type="checkbox"
               name="sportsRequired"
               th:checked="${criteria['sportsRequired'] == true}"
+              type="checkbox"
             />Sports required</label
           ><label class="checkbox"
             ><input
-              type="checkbox"
               name="disabilityPreferred"
               th:checked="${criteria['disabilityPreferred'] == true}"
+              type="checkbox"
             />Disability-inclusive preference</label
           >
         </div>

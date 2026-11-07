@@ -2,7 +2,7 @@
 
 Read the Java classes in this order: `WebController` → `Scholarships` → `Matching` → `Store`.
 
-1. **Encapsulation**: `Accounts`, `Documents`, and `Store` hold private dependencies and expose operations. A controller asks `accounts.register(...)`; it does not select a hashing algorithm or build reset tokens itself. `Documents` owns the private storage root, preventing filenames from selecting filesystem paths.
+1. **Encapsulation**: `Accounts`, `Documents`, and `Store` hold private dependencies and expose operations. A controller asks `accounts.register(...)`; it does not select a hashing algorithm itself. `Documents` keeps private bytes in PostgreSQL and checks ownership before access; user filenames never become storage paths.
 2. **Composition**: `Scholarships` contains a `Store` and a `Matching` engine. They are supplied through its constructor. This expresses “has a,” keeps responsibilities separate and lets tests supply an isolated database.
 3. **Abstraction**: `Store` hides common persistence/JSON details behind methods such as `profile`, `scholarship`, `audit` and `notify`. Services state their workflows without repeating mapping logic. JDBC stays intentionally simple; services can also call `jdbc()` for explicit bound SQL, so this is a small helper boundary rather than a complete database abstraction. There is no ORM entity hierarchy.
 4. **Polymorphism through an interface**: `Bootstrap implements CommandLineRunner`. Spring invokes the interface contract; the overridden `run` method seeds this application's data.

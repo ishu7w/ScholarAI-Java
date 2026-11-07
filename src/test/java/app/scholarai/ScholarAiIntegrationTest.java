@@ -24,7 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
       "spring.datasource.url=${TEST_DATABASE_URL:jdbc:h2:mem:test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1}",
       "spring.datasource.username=${TEST_DATABASE_USER:sa}",
       "spring.datasource.password=${TEST_DATABASE_PASSWORD:}",
-      "app.storage=target/test-documents"
+      "app.scholarships.sync-enabled=false"
     })
 @AutoConfigureMockMvc
 @Transactional
@@ -35,14 +35,11 @@ class ScholarAiIntegrationTest {
   @Autowired Scholarships scholarships;
   @Autowired Matching matching;
 
-  @org.springframework.test.context.bean.override.mockito.MockitoBean
-  org.springframework.mail.javamail.JavaMailSender mail;
-
   String student, institution, otherInstitution, email;
   final String password = "A-test-password-123";
 
   @BeforeEach
-  void identities() {
+  void identities() throws Exception {
     email = "student-" + UUID.randomUUID() + "@example.test";
     student = accounts.register("Test Student", email, password, "student");
     institution =
@@ -57,6 +54,21 @@ class ScholarAiIntegrationTest {
             "other-" + UUID.randomUUID() + "@example.test",
             password,
             "institution");
+    // Historical reference programmes are test fixtures only; production bootstrap seeds none.
+    for (var fixture : store.list(Bootstrap.read("fixture-scholarships.json"))) {
+      if (store.scholarship(fixture.get("id").toString()) == null)
+        store
+            .jdbc()
+            .update(
+                "INSERT INTO"
+                    + " scholarships(id,owner_id,status,payload,source_type,source_url,application_url)"
+                    + " VALUES (?,?,'active',?,'institution',?,?)",
+                fixture.get("id"),
+                institution,
+                store.json(fixture),
+                "https://provider.example.test/programmes",
+                "https://provider.example.test/apply");
+    }
   }
 
   SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor studentSession() {
@@ -87,7 +99,8 @@ class ScholarAiIntegrationTest {
     s.put("name", "Live test scholarship");
     s.put("provider", "Test Institution");
     s.put("category", "Merit");
-    s.put("description", "A real test program.");
+    s.put("description", "An isolated test fixture programme.");
+    s.put("applicationUrl", "https://provider.example.test/apply");
     s.put("currency", "USD");
     s.put("deadline", "2099-12-31");
     s.put("amount", "1000");
@@ -104,8 +117,6 @@ class ScholarAiIntegrationTest {
             "/",
             "/login",
             "/register",
-            "/forgot-password",
-            "/reset-password?token=test",
             "/scholarships",
             "/catalogue",
             "/scholarships/sch-merit-excellence",
@@ -217,8 +228,17 @@ class ScholarAiIntegrationTest {
     store.jdbc().update("UPDATE scholarships SET status='closed' WHERE id=?", id);
     assertThatThrownBy(() -> scholarships.apply(student, id))
         .isInstanceOf(ResponseStatusException.class);
+    var expired = store.scholarship("sch-merit-excellence");
+    expired.put(
+        "deadline", java.time.LocalDate.now(java.time.ZoneOffset.UTC).minusDays(1).toString());
+    store
+        .jdbc()
+        .update(
+            "UPDATE scholarships SET payload=? WHERE id='sch-merit-excellence'",
+            store.json(expired));
     assertThatThrownBy(() -> scholarships.apply(student, "sch-merit-excellence"))
-        .isInstanceOf(ResponseStatusException.class);
+        .isInstanceOf(ResponseStatusException.class)
+        .hasMessageContaining("deadline");
   }
 
   @Test
@@ -278,35 +298,12 @@ class ScholarAiIntegrationTest {
     var doc = store.one("SELECT * FROM documents WHERE owner_id=?", student);
     mvc.perform(get("/documents/" + doc.get("id")).with(studentSession()))
         .andExpect(status().isOk())
-        .andExpect(header().string("Cache-Control", "no-store"));
+        .andExpect(header().string("Cache-Control", "no-store"))
+        .andExpect(content().bytes(pdf.getBytes()));
     mvc.perform(get("/documents/" + doc.get("id")).with(institutionSession()))
         .andExpect(status().isNotFound());
     mvc.perform(post("/documents/" + doc.get("id") + "/delete").with(studentSession()).with(csrf()))
         .andExpect(status().is3xxRedirection());
-  }
-
-  @Test
-  void resetTokensAreOneUseAndRejectExpiredTokens() {
-    String token = "test-token";
-    store
-        .jdbc()
-        .update(
-            "INSERT INTO password_resets(token_hash,user_id,expires_at) VALUES (?,?,?)",
-            Accounts.hash(token),
-            student,
-            java.sql.Timestamp.from(java.time.Instant.now().plusSeconds(100)));
-    accounts.reset(token, "A-new-password-123");
-    assertThatThrownBy(() -> accounts.reset(token, "Another-password-123"))
-        .isInstanceOf(ResponseStatusException.class);
-    store
-        .jdbc()
-        .update(
-            "INSERT INTO password_resets(token_hash,user_id,expires_at) VALUES (?,?,?)",
-            Accounts.hash("expired"),
-            student,
-            java.sql.Timestamp.from(java.time.Instant.now().minusSeconds(1)));
-    assertThatThrownBy(() -> accounts.reset("expired", "Another-password-123"))
-        .isInstanceOf(ResponseStatusException.class);
   }
 
   @Test
@@ -330,35 +327,6 @@ class ScholarAiIntegrationTest {
                 .with(csrf())
                 .param("action", "approve"))
         .andExpect(status().isForbidden());
-  }
-
-  @Test
-  void recoveryEmailDeliversOneUseLinkAndRevokesOldSession() throws Exception {
-    var login = mvc.perform(formLogin().user("email", email).password(password)).andReturn();
-    var session = (MockHttpSession) login.getRequest().getSession(false);
-    mvc.perform(post("/forgot-password").with(csrf()).param("email", email))
-        .andExpect(redirectedUrl("/forgot-password?sent"));
-    var captor =
-        org.mockito.ArgumentCaptor.forClass(org.springframework.mail.SimpleMailMessage.class);
-    org.mockito.Mockito.verify(mail).send(captor.capture());
-    var message = captor.getValue();
-    assertThat(message.getTo()).containsExactly(email);
-    String token = message.getText().split("token=")[1].split("\\s")[0];
-    mvc.perform(
-            post("/reset-password")
-                .with(csrf())
-                .param("token", token)
-                .param("password", "A-reset-password-123"))
-        .andExpect(redirectedUrl("/login?reset"));
-    mvc.perform(get("/dashboard/student").session(session)).andExpect(redirectedUrl("/login"));
-    mvc.perform(
-            post("/reset-password")
-                .with(csrf())
-                .param("token", token)
-                .param("password", "A-reset-password-123"))
-        .andExpect(status().isBadRequest());
-    mvc.perform(formLogin().user("email", email).password("A-reset-password-123"))
-        .andExpect(redirectedUrl("/dashboard"));
   }
 
   @Test
@@ -476,5 +444,65 @@ class ScholarAiIntegrationTest {
             post("/dashboard/student/profile").with(studentSession()).with(csrf()).params(update))
         .andExpect(status().is3xxRedirection());
     assertThat(Matching.number(store.profile(student), "sopQuality")).isEqualTo(80);
+  }
+
+  @Test
+  void applyNowRedirectsToStoredOfficialSiteWithoutCreatingAnApplication() throws Exception {
+    String id = program();
+    mvc.perform(get("/scholarships/" + id + "/apply"))
+        .andExpect(status().isFound())
+        .andExpect(header().string("Location", "https://provider.example.test/apply"));
+    assertThat(store.rows("SELECT id FROM applications WHERE scholarship_id=?", id)).isEmpty();
+    mvc.perform(get("/scholarships/" + id))
+        .andExpect(status().isOk())
+        .andExpect(
+            content()
+                .string(
+                    org.hamcrest.Matchers.containsString("https://provider.example.test/apply")));
+  }
+
+  @Test
+  void officialProviderPagesRenderUnknownTermsWithoutInventedScores() throws Exception {
+    String id = "official-" + UUID.randomUUID();
+    var listing =
+        Map.of(
+            "id",
+            id,
+            "name",
+            "Provider Published Scholarship",
+            "provider",
+            "Official University",
+            "description",
+            "A fixture representing provider-published facts only.",
+            "category",
+            "Official scholarship",
+            "sourceType",
+            "official",
+            "applicationStatus",
+            "open",
+            "tags",
+            List.of());
+    store
+        .jdbc()
+        .update(
+            "INSERT INTO"
+                + " scholarships(id,status,payload,source_type,source_id,source_url,application_url)"
+                + " VALUES (?,'active',?,'official','fixture',?,?)",
+            id,
+            store.json(listing),
+            "https://provider.example.test/programme",
+            "https://provider.example.test/apply");
+    mvc.perform(get("/scholarships/" + id).with(studentSession()))
+        .andExpect(status().isOk())
+        .andExpect(
+            content()
+                .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("null%"))));
+    mvc.perform(get("/scholarships?q=Provider%20Published").with(studentSession()))
+        .andExpect(status().isOk());
+    mvc.perform(get("/scholarships/" + id + "/apply"))
+        .andExpect(redirectedUrl("https://provider.example.test/apply"));
+    assertThatThrownBy(() -> scholarships.apply(student, id))
+        .isInstanceOf(ResponseStatusException.class)
+        .hasMessageContaining("official provider website");
   }
 }

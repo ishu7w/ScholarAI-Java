@@ -139,6 +139,8 @@ class ServiceConsistencyTest {
     new Bootstrap(store, encoder, " EXISTING@EXAMPLE.TEST ", "").run();
     assertThat(accounts.user("existing").get("role")).isEqualTo("student");
     verify(encoder, times(1)).encode(anyString());
+    assertThat(store.jdbc().queryForObject("SELECT COUNT(*) FROM scholarships", Integer.class))
+        .isZero();
   }
 
   @Test
@@ -176,5 +178,22 @@ class ServiceConsistencyTest {
     store.jdbc().update("UPDATE users SET approved=FALSE WHERE id='institution'");
     assertThat(copilot.answer("institution", "Help me publish"))
         .contains("awaiting administrator approval");
+  }
+
+  @Test
+  void newFundingPlanContainsNoGuessedBudgetOrSavedChecklist() {
+    createUser("new-student", "student");
+    var aid = new FinancialAid(store);
+    var plan = aid.load("new-student");
+    for (String key : List.of("cost", "confirmed", "contribution"))
+      assertThat(Matching.number(plan, key)).isZero();
+    assertThat((List<?>) plan.get("checked")).isEmpty();
+    assertThat(aid.gap(plan)).isZero();
+    assertThat(
+            store
+                .jdbc()
+                .queryForObject(
+                    "SELECT COUNT(*) FROM aid_plans WHERE user_id='new-student'", Integer.class))
+        .isZero();
   }
 }

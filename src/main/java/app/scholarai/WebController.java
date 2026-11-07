@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.Duration;
 import java.util.*;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +31,8 @@ public class WebController {
   private final Copilot copilot;
   private final Administration administration;
   private final FinancialAid financialAid;
+  private final ScholarshipSync scholarshipSync;
+  private final String cronSecret;
 
   public WebController(
       Store store,
@@ -42,7 +43,10 @@ public class WebController {
       DocumentChecks documentChecks,
       Copilot copilot,
       Administration administration,
-      FinancialAid financialAid) {
+      FinancialAid financialAid,
+      ScholarshipSync scholarshipSync,
+      @org.springframework.beans.factory.annotation.Value("${app.cron-secret:}")
+          String cronSecret) {
     this.store = store;
     this.accounts = accounts;
     this.programs = programs;
@@ -52,11 +56,29 @@ public class WebController {
     this.copilot = copilot;
     this.administration = administration;
     this.financialAid = financialAid;
+    this.scholarshipSync = scholarshipSync;
+    this.cronSecret = cronSecret;
   }
 
   @ModelAttribute
   public void shared(Model model, Principal principal) {
     model.addAttribute("title", "ScholarAI");
+    model.addAttribute(
+        "sourceStatuses",
+        store
+            .rows(
+                "SELECT id AS source_id,name,source_url,status,message,record_count AS"
+                    + " count,last_attempt_at AS last_fetched_at FROM scholarship_sources ORDER BY"
+                    + " name")
+            .stream()
+            .map(
+                row -> {
+                  row.put("sourceId", row.get("source_id"));
+                  row.put("sourceUrl", row.get("source_url"));
+                  row.put("lastFetchedAt", row.get("last_fetched_at"));
+                  return row;
+                })
+            .toList());
     if (principal != null) {
       var user = accounts.byEmail(principal.getName());
       model.addAttribute("user", user);
@@ -91,13 +113,59 @@ public class WebController {
     return Map.of("status", "UP");
   }
 
+  @GetMapping("/api/internal/scholarships/refresh")
+  @ResponseBody
+  ResponseEntity<Map<String, Object>> refresh(
+      @RequestHeader(value = "Authorization", defaultValue = "") String authorization) {
+    if (cronSecret.isBlank())
+      return ResponseEntity.status(503)
+          .body(Map.of("success", false, "error", "Refresh authentication is not configured."));
+    if (!java.security.MessageDigest.isEqual(
+        ("Bearer " + cronSecret).getBytes(java.nio.charset.StandardCharsets.UTF_8),
+        authorization.getBytes(java.nio.charset.StandardCharsets.UTF_8)))
+      return ResponseEntity.status(401).body(Map.of("success", false, "error", "Unauthorized"));
+    var result = scholarshipSync.refresh();
+    return ResponseEntity.status(Boolean.TRUE.equals(result.get("success")) ? 200 : 502)
+        .body(result);
+  }
+
+  @PostMapping("/dashboard/admin/scholarships/refresh")
+  String manualRefresh(RedirectAttributes redirect) {
+    var result = scholarshipSync.refresh();
+    redirect.addFlashAttribute("message", result.get("status"));
+    return "redirect:/dashboard/admin";
+  }
+
   @GetMapping("/")
   String home(Model model) {
     model.addAttribute("count", programs.catalogue("").size());
+    model.addAttribute(
+        "platformStats",
+        Map.of(
+            "activeScholarships", programs.catalogue("").size(),
+            "approvedInstitutions",
+                store
+                    .jdbc()
+                    .queryForObject(
+                        "SELECT COUNT(*) FROM users WHERE role='institution' AND approved=TRUE AND"
+                            + " disabled=FALSE",
+                        Long.class),
+            "registeredStudents",
+                store
+                    .jdbc()
+                    .queryForObject(
+                        "SELECT COUNT(*) FROM users WHERE role='student' AND disabled=FALSE",
+                        Long.class),
+            "decisionsRecorded",
+                store
+                    .jdbc()
+                    .queryForObject(
+                        "SELECT COUNT(*) FROM applications WHERE status IN ('approved','rejected')",
+                        Long.class)));
     return page(model, "Every decision, explained.", "home");
   }
 
-  @GetMapping({"/login", "/register", "/forgot-password", "/reset-password"})
+  @GetMapping({"/login", "/register"})
   String auth(HttpServletRequest request, Model model) {
     String mode = request.getRequestURI().substring(request.getContextPath().length() + 1);
     model.addAttribute("mode", mode);
@@ -115,22 +183,6 @@ public class WebController {
         form.getOrDefault("password", ""),
         text(form, "role", 20));
     return "redirect:/login?registered";
-  }
-
-  @PostMapping("/forgot-password")
-  String forgot(@RequestParam String email, HttpServletRequest request) {
-    require(
-        accounts.allow("reset-ip:" + request.getRemoteAddr(), 15, Duration.ofHours(1)),
-        "Too many requests. Try again later.");
-    if (accounts.allow("reset:" + email.trim().toLowerCase(Locale.ROOT), 3, Duration.ofHours(1)))
-      accounts.requestReset(email);
-    return "redirect:/forgot-password?sent";
-  }
-
-  @PostMapping("/reset-password")
-  String reset(@RequestParam String token, @RequestParam String password) {
-    accounts.reset(token, password);
-    return "redirect:/login?reset";
   }
 
   @GetMapping("/dashboard")
@@ -183,6 +235,16 @@ public class WebController {
     if (principal != null && "student".equals(user(principal).get("role")))
       model.addAttribute("match", matching.match(store.profile(uid(principal)), s));
     return page(model, s.get("name").toString(), "detail");
+  }
+
+  @GetMapping("/scholarships/{id}/apply")
+  ResponseEntity<Void> officialApply(@PathVariable String id) {
+    var scholarship = programs.find(id);
+    Object url = scholarship.get("applicationUrl");
+    require(url != null, "The provider has not published an application link yet.");
+    return ResponseEntity.status(302)
+        .location(java.net.URI.create(Scholarships.officialUrl(url.toString())))
+        .build();
   }
 
   @PostMapping("/scholarships/{id}/apply")
@@ -325,7 +387,7 @@ public class WebController {
   }
 
   @GetMapping("/documents/{id}")
-  ResponseEntity<FileSystemResource> download(@PathVariable String id, Principal p) {
+  ResponseEntity<byte[]> download(@PathVariable String id, Principal p) {
     var row = documents.accessible(user(p), id);
     return ResponseEntity.ok()
         .header(
@@ -336,7 +398,7 @@ public class WebController {
                 .toString())
         .header(HttpHeaders.CACHE_CONTROL, "no-store")
         .contentType(MediaType.parseMediaType(row.get("media_type").toString()))
-        .body(new FileSystemResource(documents.path(id)));
+        .body(documents.content(id));
   }
 
   @PostMapping("/documents/{id}/delete")
@@ -370,7 +432,7 @@ public class WebController {
   @PostMapping("/resume-analyzer/upload")
   String analyzeFile(@RequestParam MultipartFile file, Model model, Principal p)
       throws IOException {
-    require(file.getSize() > 0 && file.getSize() <= 5 * 1024 * 1024, "Upload a PDF up to 5 MB.");
+    require(file.getSize() > 0 && file.getSize() <= 4 * 1024 * 1024, "Upload a PDF up to 4 MB.");
     String text = documentChecks.extract(file.getBytes());
     require(
         text.length() >= 30,
@@ -418,7 +480,11 @@ public class WebController {
   void aidModel(Model model, Map<String, Object> plan) throws IOException {
     model.addAttribute("plan", plan);
     model.addAttribute("gap", financialAid.gap(plan));
-    model.addAttribute("funding", store.list(Bootstrap.read("funding.json")));
+    model.addAttribute(
+        "funding",
+        programs.catalogue("").stream()
+            .filter(s -> "official".equals(s.get("sourceType")))
+            .toList());
     model.addAttribute("checklist", store.list(Bootstrap.read("checklist.json")));
   }
 

@@ -1,0 +1,256 @@
+{
+  "TypedDocuments": [
+    {
+      "Fields": {
+        "study_level": {
+          "Field": "study_level",
+          "Value": "Postgraduate taught",
+          "Values": [
+            "Postgraduate taught"
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "Description": {
+          "Field": "Description",
+          "Value": "Scholarship awards to help towards the cost of tuition fees for students who have completed the Access Postgrad scheme in their final year of undergraduate study at the University.",
+          "Values": [
+            "Scholarship awards to help towards the cost of tuition fees for students who have completed the Access Postgrad scheme in their final year of undergraduate study at the University."
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "Title": {
+          "Field": "Title",
+          "Value": "Access Postgrad fee waivers | Current students | University of Bristol, Access Postgrad Scholarship",
+          "Values": [
+            "Access Postgrad fee waivers | Current students | University of Bristol",
+            "Access Postgrad Scholarship"
+          ],
+          "Highlights": [],
+          "IsArray": true
+        },
+        "Url": {
+          "Field": "Url",
+          "Value": "https://www.bristol.ac.uk/students/support/finances/scholarships/access-postgrad-fee-waivers/",
+          "Values": [
+            "https://www.bristol.ac.uk/students/support/finances/scholarships/access-postgrad-fee-waivers/"
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "detail": {
+          "Field": "detail",
+          "Value": "Access Postgrad Scholarship, This scheme has now been discontinued. Funding for 2027/28 Access Postgrad scholarships will not be available., Funding already allocated for 2026/27 will not be affected., Scholarship awards to help towards the cost of tuition fees for students who have completed the Access Postgrad scheme in their final year of undergraduate study at the University., The intention of the award is to provide students who would not normally be able to access postgraduate study with financial support to pursue their academic interests., Ten awards will provide eligible students with a scholarship of up to \u00a35,000 towards the cost of 2026/27 tuition fees., These awards have been generously funded through donations by alumni and friends to the University., Eligibility, To be eligible for this award, you must complete the University of Bristol\u2019s\u00a0Access Postgrad\u00a0scheme.\u00a0, In addition, you must:, be a final-year undergraduate student at the University of Bristol in 2025/26., be a UK (Home) fee-paying student., undertake a one-year, full-time or two-year part-time postgraduate taught programme at the University of Bristol (on a MA, MSc, LLM, MRes programme)., meet one or more of the University's widening participation criteria., Non-eligible programmes, These programmes will not qualify for the scholarship:, PGCE, PG Cert, PG Dip, MPhil, MScR, PhD, EdD, EngD, DEdPsych, MD, DDS, MMus., Further details, Read the full\u00a0, terms and conditions, .",
+          "Values": [
+            "Access Postgrad Scholarship",
+            "This scheme has now been discontinued. Funding for 2027/28 Access Postgrad scholarships will not be available.",
+            "Funding already allocated for 2026/27 will not be affected.",
+            "Scholarship awards to help towards the cost of tuition fees for students who have completed the Access Postgrad scheme in their final year of undergraduate study at the University.",
+            "The intention of the award is to provide students who would not normally be able to access postgraduate study with financial support to pursue their academic interests.",
+            "Ten awards will provide eligible students with a scholarship of up to \u00a35,000 towards the cost of 2026/27 tuition fees.",
+            "These awards have been generously funded through donations by alumni and friends to the University.",
+            "Eligibility",
+            "To be eligible for this award, you must complete the University of Bristol\u2019s\u00a0Access Postgrad\u00a0scheme.\u00a0",
+            "In addition, you must:",
+            "be a final-year undergraduate student at the University of Bristol in 2025/26.",
+            "be a UK (Home) fee-paying student.",
+            "undertake a one-year, full-time or two-year part-time postgraduate taught programme at the University of Bristol (on a MA, MSc, LLM, MRes programme).",
+            "meet one or more of the University's widening participation criteria.",
+            "Non-eligible programmes",
+            "These programmes will not qualify for the scholarship:",
+            "PGCE",
+            "PG Cert",
+            "PG Dip",
+            "MPhil",
+            "MScR",
+            "PhD",
+            "EdD",
+            "EngD",
+            "DEdPsych",
+            "MD",
+            "DDS",
+            "MMus.",
+            "Further details",
+            "Read the full\u00a0",
+            "terms and conditions",
+            "."
+          ],
+          "Highlights": [],
+          "IsArray": true
+        }
+      }
+    },
+    {
+      "Fields": {
+        "study_level": {
+          "Field": "study_level",
+          "Value": "Postgraduate taught",
+          "Values": [
+            "Postgraduate taught"
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "Description": {
+          "Field": "Description",
+          "Value": "Think Big is the University of Bristol\u2019s flagship scholarship scheme, providing funding towards tuition fees for international students studying eligible undergraduate or postgraduate courses.",
+          "Values": [
+            "Think Big is the University of Bristol\u2019s flagship scholarship scheme, providing funding towards tuition fees for international students studying eligible undergraduate or postgraduate courses."
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "Title": {
+          "Field": "Title",
+          "Value": "Think Big Scholarships for international students | Current students | University of Bristol, Think Big Scholarships",
+          "Values": [
+            "Think Big Scholarships for international students | Current students | University of Bristol",
+            "Think Big Scholarships"
+          ],
+          "Highlights": [],
+          "IsArray": true
+        },
+        "Url": {
+          "Field": "Url",
+          "Value": "https://www.bristol.ac.uk/students/support/finances/scholarships/think-big-scholarships/",
+          "Values": [
+            "https://www.bristol.ac.uk/students/support/finances/scholarships/think-big-scholarships/"
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "detail": {
+          "Field": "detail",
+          "Value": "Think Big Scholarships for international students, Apply now for a Think Big Scholarship!, Think Big Scholarship applications for September 2027 entry are now open., The application deadline is 19 March 2027 at 1 pm UK time., Think Big is the University of Bristol\u2019s flagship scholarship scheme, providing funding towards tuition fees for international students studying eligible undergraduate or postgraduate courses., Eligibility, You can apply if you:\u00a0, have already applied to start an eligible course in September 2027, and you are classed as an overseas student for fee purposes.\u00a0, You do not need to have received an offer to study before submitting an international scholarship application.\u00a0, Eligible courses\u00a0, Any undergraduate course for up to four years of study delivered in person.\u00a0, Any one-year postgraduate taught or master\u2019s by research programme delivered in person.\u00a0, Non-eligible courses, Distance learning, online and part-time courses and programmes are not eligible., How to apply, Apply using the , international scholarships online application form, .\u00a0, By completing the application form, you will be considered for the following scholarships for which you are eligible:\u00a0, Think Big Scholarships, \u00a0, GREAT Scholarships, \u00a0, Mr. and Mrs. M S Siriwardena Memorial Scholarship, Michael Wong Pakshong bursary\u00a0, The , terms and conditions,  are also the same for all listed scholarships.\u00a0, You can find more details about this in our , guidance on how to apply for international scholarships, .\u00a0, Deadline, Applications close at 1 pm (UK time) on Friday 19 March 2027.\u00a0, You will be contacted about the outcome of your application by the end of May 2027.\u00a0, Contact us, For scholarship question about , these scholarships, , contact , international-scholarships@bristol.ac.uk, .\u00a0",
+          "Values": [
+            "Think Big Scholarships for international students",
+            "Apply now for a Think Big Scholarship!",
+            "Think Big Scholarship applications for September 2027 entry are now open.",
+            "The application deadline is 19 March 2027 at 1 pm UK time.",
+            "Think Big is the University of Bristol\u2019s flagship scholarship scheme, providing funding towards tuition fees for international students studying eligible undergraduate or postgraduate courses.",
+            "Eligibility",
+            "You can apply if you:\u00a0",
+            "have already applied to start an eligible course in September 2027",
+            "and you are classed as an overseas student for fee purposes.\u00a0",
+            "You do not need to have received an offer to study before submitting an international scholarship application.\u00a0",
+            "Eligible courses\u00a0",
+            "Any undergraduate course for up to four years of study delivered in person.\u00a0",
+            "Any one-year postgraduate taught or master\u2019s by research programme delivered in person.\u00a0",
+            "Non-eligible courses",
+            "Distance learning, online and part-time courses and programmes are not eligible.",
+            "How to apply",
+            "Apply using the ",
+            "international scholarships online application form",
+            ".\u00a0",
+            "By completing the application form, you will be considered for the following scholarships for which you are eligible:\u00a0",
+            "Think Big Scholarships",
+            "\u00a0",
+            "GREAT Scholarships",
+            "\u00a0",
+            "Mr. and Mrs. M S Siriwardena Memorial Scholarship",
+            "Michael Wong Pakshong bursary\u00a0",
+            "The ",
+            "terms and conditions",
+            " are also the same for all listed scholarships.\u00a0",
+            "You can find more details about this in our ",
+            "guidance on how to apply for international scholarships",
+            ".\u00a0",
+            "Deadline",
+            "Applications close at 1 pm (UK time) on Friday 19 March 2027.\u00a0",
+            "You will be contacted about the outcome of your application by the end of May 2027.\u00a0",
+            "Contact us",
+            "For scholarship question about ",
+            "these scholarships",
+            ", contact ",
+            "international-scholarships@bristol.ac.uk",
+            ".\u00a0"
+          ],
+          "Highlights": [],
+          "IsArray": true
+        }
+      }
+    },
+    {
+      "Fields": {
+        "study_level": {
+          "Field": "study_level",
+          "Value": "Undergraduate",
+          "Values": [
+            "Undergraduate"
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "Description": {
+          "Field": "Description",
+          "Value": "Free accommodation for up to three years for students who have previously been in care or are estranged from their parents. ",
+          "Values": [
+            "Free accommodation for up to three years for students who have previously been in care or are estranged from their parents. "
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "Title": {
+          "Field": "Title",
+          "Value": "Unite Foundation scholarships | Current students | University of Bristol, Unite Foundation Scholarships",
+          "Values": [
+            "Unite Foundation scholarships | Current students | University of Bristol",
+            "Unite Foundation Scholarships"
+          ],
+          "Highlights": [],
+          "IsArray": true
+        },
+        "Url": {
+          "Field": "Url",
+          "Value": "https://www.bristol.ac.uk/students/support/finances/scholarships/unite/",
+          "Values": [
+            "https://www.bristol.ac.uk/students/support/finances/scholarships/unite/"
+          ],
+          "Highlights": [],
+          "IsArray": false
+        },
+        "detail": {
+          "Field": "detail",
+          "Value": "Unite Foundation Scholarships, Free accommodation for up to three years for students who have previously been in care or are estranged from their parents. , The University of Bristol is pleased to partner with The Unite Foundation to offer the Unite Foundation scholarship. The Unite Foundation supports estranged and care-experienced students with a rent-free #HomeAtUniversity for up to three years through a nationwide scholarship scheme., Eligibility, You can apply for the scholarship if you are:, 25 or under, a statutory care leaver, care experienced (Scotland), or estranged from your family, starting or studying your first undergraduate degree, eligible for UK home fee status, applying to one of the Unite Foundation\u2019s partner universities (this includes University of Bristol), Current students who meet the eligibility criteria can also apply for the scholarship., Visit the , Unite Foundation website,  for full details.\u00a0, How to apply, Applications for the Unite Foundation Scholarship are now closed for 26/27. , The new application cycle will open on 1 January 2027. Applications typically close early June. , Check the Unite Foundation Webpage,  for more information., Assessment process, The Unite Foundation cannot provide awards for every eligible young person. , An eligible application offers a chance and not a guarantee of a scholarship award. If your eligible application is unsuccessful initially, you will be put on the reserve list and can go through the adjustment and clearing process. You can also reapply the following year., Further details, If you have any questions, email , care-leavers@bristol.ac.uk, Further information is available on the , Unite Foundation website, .\u00a0, Scholarships are reviewed on a regular basis and the Unite Foundation reserves the right to withdraw, amend or introduce new scholarships at any time. Scholarships are offered subject to funding and availability.\u00a0, Every young person should have the opportunity to succeed whatever their background. Too few young people estranged from family or leaving care realise their potential at university. We want to change that., Unite Foundation",
+          "Values": [
+            "Unite Foundation Scholarships",
+            "Free accommodation for up to three years for students who have previously been in care or are estranged from their parents. ",
+            "The University of Bristol is pleased to partner with The Unite Foundation to offer the Unite Foundation scholarship. The Unite Foundation supports estranged and care-experienced students with a rent-free #HomeAtUniversity for up to three years through a nationwide scholarship scheme.",
+            "Eligibility",
+            "You can apply for the scholarship if you are:",
+            "25 or under",
+            "a statutory care leaver, care experienced (Scotland), or estranged from your family",
+            "starting or studying your first undergraduate degree",
+            "eligible for UK home fee status",
+            "applying to one of the Unite Foundation\u2019s partner universities (this includes University of Bristol)",
+            "Current students who meet the eligibility criteria can also apply for the scholarship.",
+            "Visit the ",
+            "Unite Foundation website",
+            " for full details.\u00a0",
+            "How to apply",
+            "Applications for the Unite Foundation Scholarship are now closed for 26/27. ",
+            "The new application cycle will open on 1 January 2027. Applications typically close early June. ",
+            "Check the Unite Foundation Webpage",
+            " for more information.",
+            "Assessment process",
+            "The Unite Foundation cannot provide awards for every eligible young person. ",
+            "An eligible application offers a chance and not a guarantee of a scholarship award. If your eligible application is unsuccessful initially, you will be put on the reserve list and can go through the adjustment and clearing process. You can also reapply the following year.",
+            "Further details",
+            "If you have any questions, email ",
+            "care-leavers@bristol.ac.uk",
+            "Further information is available on the ",
+            "Unite Foundation website",
+            ".\u00a0",
+            "Scholarships are reviewed on a regular basis and the Unite Foundation reserves the right to withdraw, amend or introduce new scholarships at any time. Scholarships are offered subject to funding and availability.\u00a0",
+            "Every young person should have the opportunity to succeed whatever their background. Too few young people estranged from family or leaving care realise their potential at university. We want to change that.",
+            "Unite Foundation"
+          ],
+          "Highlights": [],
+          "IsArray": true
+        }
+      }
+    }
+  ],
+  "TotalDocument": 3
+}

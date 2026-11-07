@@ -8,7 +8,7 @@ Read README.md, ARCHITECTURE.md, SECURITY.md and docs/JAVA_MIGRATION_PLAN.md bef
 - Preserve the original design, fonts, routes and ten fixed scoring weights. Original implementation is preserved at commit b05c58b.
 - Never bypass CSRF, role checks, institution approval or scholarship ownership checks.
 - Use bound SQL parameters. Profile and scholarship JSON preserve the original domain field names; identity and relationships are normalized SQL columns.
-- Reference scholarship dates and external funding calls are not automatically renewed. Never invent deadlines or claim award guarantees.
+- Refresh official scholarship sources without inventing or automatically renewing their published dates. Never invent deadlines or claim award guarantees.
 - Run `mvn verify` and inspect changed Thymeleaf pages in a browser. CI also runs the integration suite against PostgreSQL.
 - Use `.env.example` for configuration examples; never commit real secrets or files under data/.
-- Do not claim live SMTP, backups, TLS or deployment were tested unless they actually were.
+- Email/recovery is intentionally omitted. Do not claim backups, TLS or deployment were tested unless they actually were.

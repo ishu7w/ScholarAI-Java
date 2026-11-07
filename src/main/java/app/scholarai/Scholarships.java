@@ -26,7 +26,7 @@ public class Scholarships {
 
   public List<Map<String, Object>> catalogue(String query) {
     String q = query.toLowerCase(Locale.ROOT);
-    return store.rows("SELECT * FROM scholarships WHERE status='active'").stream()
+    return store.rows("SELECT * FROM scholarships WHERE status='active' AND source_type <> 'legacy' AND (deadline_on IS NULL OR deadline_on >= ?)",java.sql.Date.valueOf(LocalDate.now(java.time.ZoneOffset.UTC))).stream()
         .map(store::scholarship)
         .filter(
             s ->
@@ -44,9 +44,19 @@ public class Scholarships {
 
   public Map<String, Object> find(String id) {
     var s = store.scholarship(id);
-    if (s == null)
+    if (s == null || "legacy".equals(s.get("sourceType")))
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Scholarship not found.");
     return s;
+  }
+
+  public static String officialUrl(String value) {
+    try {
+      var uri=java.net.URI.create(value.trim());
+      String host=uri.getHost();
+      require("https".equalsIgnoreCase(uri.getScheme())&&host!=null&&host.contains(".")&&uri.getUserInfo()==null&&value.length()<=2048,"Enter the official HTTPS application URL.");
+      require(!host.equalsIgnoreCase("localhost")&&!host.endsWith(".local")&&!host.matches("[0-9.]+")&&!host.contains(":"),"Use a public official provider domain.");
+      return uri.toASCIIString();
+    }catch(IllegalArgumentException ex){throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Enter a valid official HTTPS application URL.");}
   }
 
   public void institution(Map<String, Object> user) {
@@ -141,6 +151,7 @@ public class Scholarships {
     var row = store.one("SELECT * FROM scholarships WHERE id=? FOR UPDATE", id);
     require(row != null, "Scholarship not found.");
     var s = store.scholarship(row);
+    require(!"official".equals(s.get("sourceType"))&&!"legacy".equals(s.get("sourceType")),"Apply on the official provider website; ScholarAI cannot submit this external application for you.");
     require("active".equals(s.get("status")), "This scholarship is closed.");
     require(
         !LocalDate.parse(s.get("deadline").toString())
@@ -298,6 +309,8 @@ public class Scholarships {
             .map(String::trim)
             .filter(v -> !v.isBlank())
             .toList());
+    String applicationUrl=officialUrl(text(form,"applicationUrl",2048));
+    s.put("applicationUrl",applicationUrl);s.put("sourceType","institution");
     String status = form.getOrDefault("status", "active");
     require(Set.of("active", "closed", "draft").contains(status), "Invalid status.");
     if (existing == null)
@@ -314,6 +327,7 @@ public class Scholarships {
           .jdbc()
           .update(
               "UPDATE scholarships SET payload=?,status=? WHERE id=?", store.json(s), status, id);
+    store.jdbc().update("UPDATE scholarships SET application_url=?,source_url=?,source_type='institution',deadline_on=? WHERE id=?",applicationUrl,applicationUrl,java.sql.Date.valueOf(s.get("deadline").toString()),id);
     store.audit(user.get("id").toString(), "scholarship.saved", id);
     return id;
   }

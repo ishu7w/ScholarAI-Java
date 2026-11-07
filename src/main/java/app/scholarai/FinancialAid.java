@@ -23,11 +23,11 @@ public class FinancialAid {
             "currency",
             "USD",
             "cost",
-            24000,
+            0,
             "confirmed",
-            4000,
+            0,
             "contribution",
-            6000,
+            0,
             "checked",
             List.of())
         : store.object(row.get("payload").toString());

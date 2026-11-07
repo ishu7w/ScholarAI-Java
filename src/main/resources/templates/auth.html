@@ -16,7 +16,7 @@
       </section>
       <section class="panel">
         <h2
-          th:text="${mode == 'login' ? 'Welcome back.' : mode == 'register' ? 'Create your account.' : mode == 'forgot-password' ? 'Recover your account.' : 'Choose a new password.'}"
+          th:text="${mode == 'login' ? 'Welcome back.' : 'Create your account.'}"
         ></h2>
         <p class="notice" th:if="${param.error}" role="alert">
           Email or password was incorrect, or the account is disabled.
@@ -28,13 +28,6 @@
         <p class="notice" th:if="${param.logout}" role="status">
           You have signed out.
         </p>
-        <p class="notice" th:if="${param.reset}" role="status">
-          Password updated. Sign in with your new password.
-        </p>
-        <p class="notice" th:if="${param.sent}" role="status">
-          If an eligible account exists, recovery instructions will be sent. If
-          no email arrives, contact your administrator.
-        </p>
         <form th:action="@{/{mode}(mode=${mode})}" method="post">
           <label th:if="${mode == 'register'}"
             >Your name<input
@@ -42,15 +35,17 @@
               required
               minlength="2"
               maxlength="120"
-              autocomplete="name" /></label
-          ><label th:if="${mode != 'reset-password'}"
+              autocomplete="name"
+          /></label>
+          <label
             >Email address<input
               type="email"
               name="email"
               required
               maxlength="254"
-              autocomplete="username" /></label
-          ><label th:if="${mode != 'forgot-password'}"
+              autocomplete="username"
+          /></label>
+          <label
             >Password<span
               th:if="${mode != 'login'}"
               class="small password-help"
@@ -61,26 +56,25 @@
               required
               th:minlength="${mode == 'login' ? 1 : 12}"
               maxlength="72"
-              th:autocomplete="${mode == 'login' ? 'current-password' : 'new-password'}" /></label
-          ><label th:if="${mode == 'register'}"
+              th:autocomplete="${mode == 'login' ? 'current-password' : 'new-password'}"
+          /></label>
+          <label th:if="${mode == 'register'}"
             >I am a<select name="role">
               <option value="student">Student</option>
-              <option value="institution">
+              <option
+                value="institution"
+                th:selected="${param.role != null and param.role[0] == 'institution'}"
+              >
                 Institution (approval required)
               </option>
             </select></label
-          ><input
-            th:if="${mode == 'reset-password'}"
-            type="hidden"
-            name="token"
-            th:value="${param.token}"
-          /><button
-            th:text="${mode == 'login' ? 'Sign in ↗' : mode == 'register' ? 'Create account ↗' : mode == 'forgot-password' ? 'Send recovery instructions ↗' : 'Update password ↗'}"
+          >
+          <button
+            th:text="${mode == 'login' ? 'Sign in ↗' : 'Create account ↗'}"
           ></button>
         </form>
         <div class="auth-links">
-          <a href="/login">Sign in</a><a href="/register">Create account</a
-          ><a href="/forgot-password">Forgot password?</a>
+          <a href="/login">Sign in</a><a href="/register">Create account</a>
         </div>
       </section>
     </main>
