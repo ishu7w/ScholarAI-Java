@@ -2,7 +2,7 @@
 
 ## Clean application build
 
-Java 21 `mvn -B clean verify` passed **48 tests, zero failures/errors**. Clean packaging was checked to exclude the removed production scholarship/funding seeds and all test fixtures from the executable JAR.
+Java 21 clean verification passed 48 tests; the subsequent HTTPS-proxy regression build passed **50 tests, zero failures/errors**. Clean packaging was checked to exclude the removed production scholarship/funding seeds and all test fixtures from the executable JAR.
 
 Coverage includes account registration/login/logout, role/CSRF boundaries, normalized identities, institution ownership/approval, immutable local application snapshots, reviewer assessments, saved plans, private document contents and transactional rollback/deletion. Email recovery tests and routes were removed when the user explicitly removed that requirement.
 
@@ -21,3 +21,5 @@ Official provider-published application links are preserved exactly, including t
 The [Java CI workflow](https://github.com/ishu7w/ScholarAI-Java/actions/workflows/ci.yml) verifies H2, PostgreSQL and the Docker image. Consult the run for the release commit for its executed result. Public HTTPS deployment, authenticated browser flows and actual scheduled refresh configuration are checked against the new Vercel project before final handoff; deployment configuration alone is not proof of a live application.
 
 Previous migration/browser/axe results are historical evidence, not a fresh claim about this changed release. See UI_PARITY.md. No unlimited-capacity or outage-free guarantee is made for free external services. Current platform/provider limits and backup/restore operations remain operational considerations.
+
+Production proxy regression coverage verifies forwarded HTTPS redirects and Secure/HttpOnly/SameSite session cookies behind the container connection.
